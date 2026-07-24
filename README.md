@@ -35,6 +35,20 @@ Enterprise backend starter for DIRECT FARM.
 6. Run security audit: `npm run audit`
 7. Run in development: `npm run dev`
 
+## GitHub Push
+
+The repository is configured with origin:
+
+```bash
+git remote -v
+```
+
+Use the current branch and push to GitHub:
+
+```bash
+git push -u origin HEAD
+```
+
 ## Test Coverage
 
 The repository includes unit and smoke tests for core authentication and health checks:
