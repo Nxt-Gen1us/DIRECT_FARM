@@ -13,7 +13,6 @@ import Message from './models/message.model.js';
 import Notification from './models/notification.model.js';
 import Review from './models/review.model.js';
 import Wallet from './models/wallet.model.js';
-import AiPrediction from './models/aiPrediction.model.js';
 
 export const seedDatabase = async () => {
   console.log('🌱 Starting DIRECT FARM Database Initialization & Seeding...');
@@ -35,8 +34,7 @@ export const seedDatabase = async () => {
       Message.deleteMany({}),
       Notification.deleteMany({}),
       Review.deleteMany({}),
-      Wallet.deleteMany({}),
-      AiPrediction.deleteMany({})
+      Wallet.deleteMany({})
     ]);
 
     console.log('🔐 Hashing default user passwords...');
@@ -378,26 +376,6 @@ export const seedDatabase = async () => {
       transactions: [
         { type: 'credit', amount: 12500, description: 'Direct payout for produce orders' }
       ]
-    });
-
-    console.log('🤖 Creating AI Predictions...');
-    await AiPrediction.create({
-      user: farmerRamesh._id,
-      farmer: profileRamesh._id,
-      product: tomatoes._id,
-      type: 'disease',
-      inputData: { crop: 'Tomato', humidity: '72%', leafImage: 'sample_leaf.jpg' },
-      result: { diseaseName: 'Early Blight', recommendation: 'Apply organic neem oil spray in early morning.' },
-      confidence: 0.94
-    });
-
-    await AiPrediction.create({
-      farmer: profilePriya._id,
-      product: mangoes._id,
-      type: 'price',
-      inputData: { location: 'Ratnagiri', season: 'Peak Summer', grade: 'A+' },
-      result: { suggestedPricePerDozen: 1250, marketDemand: 'Very High' },
-      confidence: 0.89
     });
 
     console.log('🎉 DIRECT FARM Database Seeding Completed Successfully!');

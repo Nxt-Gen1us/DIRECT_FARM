@@ -1,84 +1,24 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { products } from "../../data/products";
 import { farmerById } from "../../data/farmers";
-import { inr } from "../../lib/format";
+import { formatUnit, inr } from "../../lib/format";
 import { Badge } from "../../components/ui/Badge";
 import { DeskTable } from "../../components/admin/DeskTable";
-import type { ProductCategory } from "../../lib/types";
+import type { Product, ProductCategory } from "../../lib/types";
+import { apiConfigured } from "../../lib/api";
+import { createAdminProduct, deleteAdminProduct, updateAdminProduct } from "../../lib/api/admin";
+import { fetchProducts } from "../../lib/api/products";
+
+type ProductForm = { id?: string; name: string; price: string; stock: string };
 
 export function AdminProductsPage() {
   const { t } = useTranslation();
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<ProductCategory | "all">("all");
-  const list = useMemo(() => {
-    return products.filter((p) => {
-      if (cat !== "all" && p.category !== cat) return false;
-      const hay = `${p.name} ${p.variety} ${p.origin}`.toLowerCase();
-      return !q.trim() || hay.includes(q.trim().toLowerCase());
-    });
-  }, [q, cat]);
-
-  return (
-    <div>
-      <h2 className="font-display text-3xl">{t("desk.products")}</h2>
-      <p className="mt-1 text-sm text-ink-soft">{t("desk.productsLede")}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={t("desk.searchLots")}
-          className="min-w-[200px] flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm outline-none"
-        />
-        <select
-          value={cat}
-          onChange={(e) => setCat(e.target.value as ProductCategory | "all")}
-          className="rounded-full border border-line bg-canvas px-3 py-2 text-sm"
-        >
-          <option value="all">{t("desk.allCats")}</option>
-          {["vegetables", "fruits", "grains", "spices", "dairy", "pulses"].map((c) => (
-            <option key={c} value={c}>
-              {t(`categories.${c}`)}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="mt-5">
-        <DeskTable
-          head={[t("desk.col.lot"), t("desk.col.farm"), t("desk.col.price"), t("desk.col.stock"), t("desk.col.flags")]}
-        >
-          {list.map((p) => {
-            const f = farmerById(p.farmerId);
-            return (
-              <tr key={p.id} className="border-t border-line">
-                <td className="px-4 py-3">
-                  <Link to={`/market/${p.id}`} className="flex items-center gap-2 hover:text-primary">
-                    <img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" />
-                    <span>
-                      <span className="block font-medium">{p.name}</span>
-                      <span className="block text-[11px] text-muted">{p.variety}</span>
-                    </span>
-                  </Link>
-                </td>
-                <td className="px-4 py-3 text-ink-soft">{f?.farmName}</td>
-                <td className="px-4 py-3">
-                  {inr(p.price)} / {p.unit}
-                </td>
-                <td className="px-4 py-3">
-                  {p.stock} {p.unit}
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-1">
-                    {p.organic && <Badge tone="nature">{t("common.organic")}</Badge>}
-                    {p.stock < 80 && <Badge tone="secondary">{t("desk.low")}</Badge>}
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </DeskTable>
-      </div>
-    </div>
-  );
+  const [q, setQ] = useState(""); const [cat, setCat] = useState<ProductCategory | "all">("all"); const [items, setItems] = useState<Product[]>(apiConfigured() ? [] : products); const [form, setForm] = useState<ProductForm | null>(null);
+  useEffect(() => { if (apiConfigured()) void fetchProducts({ limit: 100 }).then(setItems).catch(() => undefined); }, []);
+  const list = useMemo(() => items.filter((p) => (cat === "all" || p.category === cat) && `${p.name} ${p.variety} ${p.origin}`.toLowerCase().includes(q.trim().toLowerCase())), [q, cat, items]);
+  const save = async () => { if (!form?.name || !form.price || !form.stock) return; if (!apiConfigured()) { window.alert(t("adminUi.databaseUnavailable")); return; } try { const existing = items.find((item) => item.id === form.id); if (existing) { const saved = await updateAdminProduct(existing.id, { name: form.name, price: Number(form.price), quantityAvailable: Number(form.stock) }); setItems((current) => current.map((item) => item.id === form.id ? saved : item)); window.alert(t("adminUi.updated")); } else { const saved = await createAdminProduct({ farmerId: "", name: form.name, category: "vegetables", price: Number(form.price), quantityAvailable: Number(form.stock) }); setItems((current) => [saved, ...current]); window.alert(t("adminUi.created")); } setForm(null); } catch { window.alert(t("adminUi.operationFailed")); } };
+  const remove = async (id: string) => { if (!window.confirm(t("adminUi.deleteCropConfirm"))) return; if (!apiConfigured()) { window.alert(t("adminUi.databaseUnavailable")); return; } try { await deleteAdminProduct(id); setItems((current) => current.filter((item) => item.id !== id)); window.alert(t("adminUi.deleted")); } catch { window.alert(t("adminUi.operationFailed")); } };
+  return <div><h2 className="font-display text-3xl">{t("desk.products")}</h2><p className="mt-1 text-sm text-ink-soft">{t("desk.productsLede")}</p><div className="admin-crud-toolbar mt-4"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("desk.searchLots")} className="min-w-[200px] flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm outline-none" /><select value={cat} onChange={(e) => setCat(e.target.value as ProductCategory | "all")} className="rounded-full border border-line bg-canvas px-3 py-2 text-sm"><option value="all">{t("desk.allCats")}</option>{["vegetables", "fruits", "grains", "spices", "dairy", "pulses"].map((c) => <option key={c} value={c}>{t(`categories.${c}`)}</option>)}</select><button type="button" onClick={() => setForm({ name: "", price: "", stock: "" })}>{t("adminUi.addCrop")}</button></div>{form && <section className="admin-crud-form"><h3>{form.id ? t("adminUi.editCrop") : t("adminUi.addCrop")}</h3><div className="admin-form-grid"><input placeholder={t("adminUi.cropName")} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /><input placeholder={t("adminUi.price")} type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} /><input placeholder={t("adminUi.quantity")} type="number" value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} /></div><div className="admin-form-actions"><button type="button" onClick={() => setForm(null)}>{t("adminUi.cancel")}</button><button type="button" onClick={() => void save()}>{t("adminUi.save")}</button></div></section>}<div className="mt-5"><DeskTable head={[t("desk.col.lot"), t("desk.col.farm"), t("desk.col.price"), t("desk.col.stock"), t("desk.col.flags"), t("adminUi.action")]}>{list.map((p) => { const f = farmerById(p.farmerId); return <tr key={p.id} className="border-t border-line"><td className="px-4 py-3"><Link to={`/market/${p.id}`} className="flex items-center gap-2 hover:text-primary"><img src={p.image} alt="" className="h-10 w-10 rounded-lg object-cover" /><span><span className="block font-medium">{p.nameKey?.startsWith("products.") ? t(p.nameKey) : p.name}</span><span className="block text-[11px] text-muted">{p.variety}</span></span></Link></td><td className="px-4 py-3 text-ink-soft">{f?.farmName}</td><td className="px-4 py-3">{inr(p.price)} / {formatUnit(p.unit)}</td><td className="px-4 py-3">{p.stock} {formatUnit(p.unit)}</td><td className="px-4 py-3"><div className="flex flex-wrap gap-1">{p.organic && <Badge tone="nature">{t("common.organic")}</Badge>}{p.stock < 80 && <Badge tone="secondary">{t("desk.low")}</Badge>}</div></td><td className="px-4 py-3"><div className="admin-row-actions"><button type="button" onClick={() => setForm({ id: p.id, name: p.name, price: String(p.price), stock: String(p.stock) })}>{t("adminUi.edit")}</button><button type="button" onClick={() => void remove(p.id)}>{t("adminUi.delete")}</button></div></td></tr>; })}</DeskTable></div></div>;
 }

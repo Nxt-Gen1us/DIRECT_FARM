@@ -21,6 +21,19 @@ import type {
   PresenceState,
 } from "../../lib/types";
 import { useApp } from "./AppProviders";
+import { tokenStore } from "../../lib/api";
+import { apiConfigured } from "../../lib/api";
+import {
+  fetchNotifications,
+  markAllNotificationsRead as markAllNotificationsReadApi,
+  markNotificationRead,
+  type BackendNotification,
+} from "../../lib/api/notifications";
+import {
+  fetchConversation,
+  sendMessage,
+  type BackendMessage,
+} from "../../lib/api/messages";
 
 const QUEUE_KEY = "fc-chat-queue";
 const READ_KEY = "fc-chat-read";
@@ -49,7 +62,7 @@ type ChatContextValue = {
   markThreadRead: (id: string) => void;
   markNoticeRead: (id: string) => void;
   markAllNotices: () => void;
-  openFarmerThread: (farmerId: string) => string;
+  openFarmerThread: (farmerId: string, recipientUserId?: string, profile?: { name: string; farmName: string; village: string; district: string; state: string; specialty: string }) => string;
   getThread: (id: string) => ChatThread | undefined;
 };
 
@@ -111,6 +124,41 @@ function mergeThreads(queue: ChatMessage[], cleared: string[]): ChatThread[] {
   });
 }
 
+function adaptNotification(notification: BackendNotification): DeskNotice {
+  const kind = notification.metadata?.kind;
+  return {
+    id: notification._id,
+    kind: kind === "chat" || kind === "crate" || kind === "weather" || kind === "passport" ? kind : "system",
+    title: notification.title,
+    body: notification.body,
+    at: notification.createdAt,
+    read: Boolean(notification.readAt),
+    href: notification.metadata?.href,
+    threadId: notification.metadata?.threadId,
+  };
+}
+
+function adaptBackendMessage(msg: BackendMessage, currentUserId?: string): ChatMessage {
+  const sender = typeof msg.sender === "string" ? { _id: msg.sender } : msg.sender;
+  const senderId = sender?._id ?? msg.receiver;
+  const senderName =
+    typeof msg.sender === "object" && msg.sender !== null
+      ? msg.sender.farmName || `${msg.sender.firstName ?? ""} ${msg.sender.lastName ?? ""}`.trim()
+      : undefined;
+
+  return {
+    id: msg._id,
+    threadId: msg.conversationId,
+    senderId,
+    senderName,
+    from: senderId === currentUserId ? "me" : "them",
+    kind: msg.kind === "image" ? "image" : msg.kind === "system" ? "system" : "text",
+    text: msg.content ?? "",
+    at: msg.createdAt,
+    status: "sent",
+  };
+}
+
 export function ChatProvider({ children }: { children: ReactNode }) {
   const { user } = useApp();
   const [queue, setQueue] = useState<ChatMessage[]>(readQueue);
@@ -124,9 +172,78 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const clientRef = useRef<RealtimeClient | null>(null);
 
   const persistQueue = useCallback((next: ChatMessage[]) => {
-    setQueue(next);
-    window.localStorage.setItem(QUEUE_KEY, JSON.stringify(next));
+    const deduped = next.filter((message, index, arr) => arr.findIndex((candidate) => candidate.id === message.id) === index);
+    setQueue(deduped);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(QUEUE_KEY, JSON.stringify(deduped));
+    }
   }, []);
+
+  const flushQueuedMessages = useCallback(async () => {
+    const pending = readQueue();
+    if (!pending.length || !apiConfigured() || !user?.id) return;
+
+    const remaining: ChatMessage[] = [];
+    for (const item of pending) {
+      if (item.status !== "queued") continue;
+
+      const content = item.text ?? "";
+      if (!content.trim()) {
+        remaining.push(item);
+        continue;
+      }
+
+      const threadId = item.threadId ?? "";
+      if (!threadId.trim()) {
+        remaining.push(item);
+        continue;
+      }
+
+      const thread = localThreads.find((t) => t.id === threadId);
+      const recipientUserId = thread?.recipientUserId ?? "";
+      if (!recipientUserId.trim()) {
+        remaining.push(item);
+        continue;
+      }
+
+      try {
+        const serverMessage = await sendMessage(threadId, content, recipientUserId);
+        const hydrated = adaptBackendMessage(serverMessage, user.id);
+
+        setLocalThreads((prev) => {
+          const existing = prev.find((t) => t.id === threadId) ?? fieldThreads.find((t) => t.id === threadId);
+          if (!existing) return prev;
+
+          const merged = [...existing.messages, hydrated]
+            .filter((message, index, arr) => arr.findIndex((candidate) => candidate.id === message.id) === index)
+            .sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+          return prev.some((t) => t.id === threadId)
+            ? prev.map((t) =>
+                t.id === threadId
+                  ? {
+                      ...t,
+                      messages: merged,
+                      lastMessage: merged[merged.length - 1]?.text ?? t.lastMessage,
+                      lastAt: merged[merged.length - 1]?.at ?? t.lastAt,
+                    }
+                  : t,
+              )
+            : [{ ...existing, messages: merged, lastMessage: merged[merged.length - 1]?.text ?? existing.lastMessage, lastAt: merged[merged.length - 1]?.at ?? existing.lastAt }, ...prev];
+        });
+      } catch {
+        remaining.push(item);
+      }
+    }
+
+    persistQueue(remaining);
+  }, [localThreads, persistQueue, user?.id]);
+
+  useEffect(() => {
+    if (live && queue.length) {
+      void flushQueuedMessages();
+    }
+  }, [flushQueuedMessages, live, queue.length]);
 
   useEffect(() => {
     const client = createRealtimeClient(
@@ -137,19 +254,39 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           setTypingIn({});
         },
         onMessage: (msg) => {
-          setLocalThreads((prev) =>
-            prev.map((th) =>
+          setLocalThreads((prev) => {
+            const existing = prev.find((thread) => thread.id === msg.threadId);
+            if (!existing) {
+              return [{
+                id: msg.threadId,
+                farmerId: msg.senderId ?? msg.threadId,
+                recipientUserId: msg.senderId,
+                farmerName: "Farm desk",
+                farmName: "Direct Farm",
+                avatar: "/images/farmer-portrait.jpg",
+                lastMessage: msg.text,
+                lastAt: msg.at,
+                unread: 1,
+                presence: "unknown",
+                messages: [msg],
+              }, ...prev];
+            }
+            const merged = [...existing.messages, msg].filter((m, index, arr) => {
+              const first = arr.findIndex((candidate) => candidate.id === m.id);
+              return first === index;
+            }).sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+            return prev.map((th) =>
               th.id === msg.threadId
                 ? {
                     ...th,
-                    messages: [...th.messages, msg],
+                    messages: merged,
                     lastMessage: msg.text || th.lastMessage,
                     lastAt: msg.at,
                     unread: th.unread + 1,
                   }
                 : th,
-            ),
-          );
+            );
+          });
         },
         onAck: (ack) => {
           persistQueue(
@@ -175,12 +312,21 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           });
         },
       },
-      { userId: user?.id },
+      { userId: user?.id, token: tokenStore.getAccess() ?? undefined },
     );
     clientRef.current = client;
     client.connect();
     return () => client.disconnect();
   }, [persistQueue, user?.id]);
+
+  useEffect(() => {
+    if (!apiConfigured() || !user?.id) return;
+    void fetchNotifications()
+      .then((items) => setNotices(items.map(adaptNotification)))
+      .catch(() => {
+        // The demo notices remain available if the backend is temporarily offline.
+      });
+  }, [user?.id]);
 
   const seedMerged = useMemo(() => mergeThreads(queue, cleared), [queue, cleared]);
 
@@ -210,6 +356,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       const sent = clientRef.current?.send({
         localId: note.id,
         threadId: input.threadId,
+        receiverId: threads.find((thread) => thread.id === input.threadId)?.recipientUserId ?? "",
         kind: note.kind,
         text: note.text,
         attachment: note.attachment,
@@ -220,7 +367,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       persistQueue([...queue, stored]);
       return stored;
     },
-    [persistQueue, queue],
+    [persistQueue, queue, threads],
   );
 
   const signalTyping = useCallback((threadId: string, on: boolean) => {
@@ -229,7 +376,41 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const joinThread = useCallback((threadId: string) => {
     clientRef.current?.join(threadId);
-  }, []);
+
+    if (apiConfigured() && user?.id) {
+      void fetchConversation(threadId)
+        .then((backendMessages) => {
+          if (!backendMessages.length) return;
+
+          const hydrated = backendMessages.map((msg) => adaptBackendMessage(msg, user.id));
+
+          setLocalThreads((prev) => {
+            const baseThread = prev.find((t) => t.id === threadId) ?? fieldThreads.find((t) => t.id === threadId);
+            if (!baseThread) return prev;
+
+            const merged = [...baseThread.messages, ...hydrated]
+              .filter((message, index, arr) => arr.findIndex((candidate) => candidate.id === message.id) === index)
+              .sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+            return prev.some((t) => t.id === threadId)
+              ? prev.map((th) =>
+                  th.id === threadId
+                    ? {
+                        ...th,
+                        messages: merged,
+                        lastMessage: merged[merged.length - 1]?.text ?? th.lastMessage,
+                        lastAt: merged[merged.length - 1]?.at ?? th.lastAt,
+                      }
+                    : th,
+                )
+              : [{ ...baseThread, messages: merged, lastMessage: merged[merged.length - 1]?.text ?? baseThread.lastMessage, lastAt: merged[merged.length - 1]?.at ?? baseThread.lastAt }, ...prev];
+          });
+        })
+        .catch(() => {
+          // Silently fail - thread will work with Socket.IO only.
+        });
+    }
+  }, [user?.id]);
 
   const markThreadRead = useCallback((id: string) => {
     setCleared((prev) => {
@@ -248,28 +429,39 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
   const markNoticeRead = useCallback((id: string) => {
     persistNotices(notices.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    if (apiConfigured()) {
+      void markNotificationRead(id).catch(() => {
+        // Keep the optimistic local read state; it will reconcile on the next refresh.
+      });
+    }
   }, [notices]);
 
   const markAllNotices = useCallback(() => {
     persistNotices(notices.map((n) => ({ ...n, read: true })));
+    if (apiConfigured()) {
+      void markAllNotificationsReadApi().catch(() => {
+        // Keep the optimistic local read state; it will reconcile on the next refresh.
+      });
+    }
   }, [notices]);
 
   const openFarmerThread = useCallback(
-    (farmerId: string) => {
+    (farmerId: string, recipientUserId?: string, profile?: { name: string; farmName: string; village: string; district: string; state: string; specialty: string }) => {
       const existing = threads.find((t) => t.farmerId === farmerId);
       if (existing) return existing.id;
       const farmer = farmerById(farmerId);
-      const id = `c-${farmerId}`;
+      const id = recipientUserId && user?.id ? [user.id, recipientUserId].sort().join(":") : `c-${farmerId}`;
       const next: ChatThread = {
         id,
         farmerId,
-        farmerName: farmer?.name ?? "Farm desk",
-        farmName: farmer?.farmName,
-        village: farmer?.village,
-        district: farmer?.district,
+        recipientUserId,
+        farmerName: profile?.name ?? farmer?.name ?? "Farm desk",
+        farmName: profile?.farmName ?? farmer?.farmName,
+        village: profile?.village ?? farmer?.village,
+        district: profile?.district ?? farmer?.district,
         avatar: farmer?.avatar ?? "/images/farmer-portrait.jpg",
         cover: farmer?.cover,
-        crop: farmer?.specialty,
+        crop: profile?.specialty ?? farmer?.specialty,
         lastMessage: "",
         lastAt: new Date().toISOString(),
         unread: 0,

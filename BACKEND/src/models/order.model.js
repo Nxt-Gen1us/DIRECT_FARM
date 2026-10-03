@@ -11,6 +11,8 @@ const orderSchema = new mongoose.Schema({
   farmer: { type: mongoose.Schema.Types.ObjectId, ref: 'FarmerProfile', required: true },
   items: [orderItemSchema],
   status: { type: String, enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'], default: 'pending' },
+  paymentMethod: { type: String, enum: ['cod', 'wallet', 'razorpay', 'upi', 'card', 'netbanking'], default: 'cod' },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'failed', 'refunded'], default: 'pending' },
   subtotal: { type: Number, required: true },
   shippingFee: { type: Number, default: 0 },
   tax: { type: Number, default: 0 },

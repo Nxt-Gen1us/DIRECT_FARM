@@ -1,214 +1,73 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { ArrowRight, ChevronDown, Filter, Leaf, Search, SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { MapPin, Search } from "lucide-react";
-import { products } from "../data/products";
+import { products as mockProducts, categories as fallbackCategories } from "../data/products";
 import { farmerById } from "../data/farmers";
-import type { ProductCategory } from "../lib/types";
-import {
-  PAGE_SIZE,
-  daysSinceHarvest,
-  defaultFilters,
-  matchesFresh,
-  type FreshBand,
-  type MarketFilters,
-  type SortKey,
-} from "../lib/market";
+import { fetchProductCategories, fetchProducts } from "../lib/api/products";
+import { apiConfigured } from "../lib/api";
+import type { Product, ProductCategory } from "../lib/types";
 import { ProductCard } from "../components/marketplace/ProductCard";
 import { CategoryStrip } from "../components/marketplace/CategoryStrip";
-import { MarketFilters as FilterPanel } from "../components/marketplace/MarketFilters";
-import { Pagination } from "../components/marketplace/Pagination";
-import { CompareBar } from "../components/marketplace/CompareBar";
-import { RecentlyViewed } from "../components/marketplace/RecentlyViewed";
-import { EmptyState, Select } from "../components/ui";
+import { EmptyState } from "../components/ui";
+import { Button } from "../components/ui/Button";
+import { useApp } from "../app/providers/AppProviders";
+import "../styles/market-redesign.css";
 
-function readFilters(params: URLSearchParams): MarketFilters {
-  const base = defaultFilters();
-  const cat = params.get("cat") as ProductCategory | "";
-  const sort = (params.get("sort") as SortKey) || base.sort;
-  const fresh = (params.get("fresh") as FreshBand) || base.fresh;
-  return {
-    ...base,
-    q: params.get("q") ?? "",
-    cat: cat || "",
-    farmerId: params.get("farmer") ?? "",
-    organic: params.get("organic") === "1",
-    inStock: params.get("stock") === "1",
-    fresh,
-    maxKm: Number(params.get("km") ?? base.maxKm),
-    minPrice: Number(params.get("min") ?? base.minPrice),
-    maxPrice: Number(params.get("max") ?? base.maxPrice),
-    sort,
-    page: Math.max(1, Number(params.get("page") ?? 1)),
-  };
-}
-
-function writeFilters(f: MarketFilters) {
-  const next = new URLSearchParams();
-  if (f.q) next.set("q", f.q);
-  if (f.cat) next.set("cat", f.cat);
-  if (f.farmerId) next.set("farmer", f.farmerId);
-  if (f.organic) next.set("organic", "1");
-  if (f.inStock) next.set("stock", "1");
-  if (f.fresh !== "any") next.set("fresh", f.fresh);
-  if (f.maxKm < 2000) next.set("km", String(f.maxKm));
-  if (f.minPrice > 0) next.set("min", String(f.minPrice));
-  if (f.maxPrice < 2000) next.set("max", String(f.maxPrice));
-  if (f.sort !== "popular") next.set("sort", f.sort);
-  if (f.page > 1) next.set("page", String(f.page));
-  return next;
-}
+const PAGE_SIZE = 12;
+type SortOption = "newest" | "priceAsc" | "priceDesc" | "fresh" | "name";
 
 export function MarketPage() {
   const { t } = useTranslation();
   const [params, setParams] = useSearchParams();
-  const filters = useMemo(() => readFilters(params), [params]);
-  const [query, setQuery] = useState(filters.q);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const { role } = useApp();
+  const category = params.get("cat") ?? "";
+  const farmerId = params.get("farmer") ?? "";
+  const searchTerm = params.get("q") ?? "";
+  const sort = (params.get("sort") as SortOption | null) ?? "newest";
+  const page = Math.max(1, Number(params.get("page") ?? 1) || 1);
+  const organicOnly = params.get("organic") === "1";
+  const [query, setQuery] = useState(searchTerm);
+  const [realProducts, setRealProducts] = useState<Product[]>([]);
+  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
-  useEffect(() => setQuery(filters.q), [filters.q]);
+  useEffect(() => setQuery(searchTerm), [searchTerm]);
+  useEffect(() => {
+    if (!apiConfigured()) return;
+    let cancelled = false;
+    setLoading(true); setLoadFailed(false);
+    Promise.all([fetchProducts({ search: searchTerm, category, isOrganic: organicOnly, available: true, limit: 100 }), fetchProductCategories()])
+      .then(([loaded, categories]) => { if (!cancelled) { setRealProducts(loaded); setCategoryIds(categories); } })
+      .catch(() => { if (!cancelled) { setRealProducts([]); setLoadFailed(true); } })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [category, organicOnly, searchTerm]);
 
-  const patch = (partial: Partial<MarketFilters>) => {
-    setParams(writeFilters({ ...filters, ...partial }), { replace: true });
-  };
+  const categoryOptions = useMemo(() => {
+    const ids = categoryIds.length ? categoryIds : fallbackCategories.map((item) => item.id);
+    return ids.map((id) => ({ id, image: fallbackCategories.find((item) => item.id === id)?.image }));
+  }, [categoryIds]);
+  const listings = useMemo(() => {
+    const source = apiConfigured() && !loadFailed ? realProducts : mockProducts;
+    const term = searchTerm.trim().toLowerCase();
+    return source.filter((product) => product.stock > 0).filter((product) => {
+      const farmer = farmerById(product.farmerId);
+      const searchable = `${product.name} ${product.variety} ${product.origin} ${farmer?.name ?? ""} ${farmer?.farmName ?? ""}`.toLowerCase();
+      return (!term || searchable.includes(term)) && (!category || product.category === category) && (!farmerId || product.farmerId === farmerId) && (!organicOnly || product.organic);
+    }).sort((left, right) => sort === "priceAsc" ? left.price - right.price : sort === "priceDesc" ? right.price - left.price : sort === "name" ? left.name.localeCompare(right.name) : sort === "fresh" ? right.harvestedOn.localeCompare(left.harvestedOn) : right.rating - left.rating);
+  }, [category, farmerId, loadFailed, organicOnly, realProducts, searchTerm, sort]);
+  const pageCount = Math.max(1, Math.ceil(listings.length / PAGE_SIZE));
+  const visibleListings = listings.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const updateParams = (updates: Record<string, string | null>) => { const next = new URLSearchParams(params); Object.entries(updates).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key)); setParams(next, { replace: true }); };
+  const submitSearch = (event: FormEvent) => { event.preventDefault(); updateParams({ q: query.trim() || null, page: "1" }); };
+  const selectCategory = (value: ProductCategory | "") => updateParams({ cat: value || null, page: "1" });
+  const clearFilters = () => setParams(new URLSearchParams(), { replace: true });
 
-  const filtered = useMemo(() => {
-    const q = filters.q.trim().toLowerCase();
-    let next = products.filter((p) => {
-      const farmer = farmerById(p.farmerId);
-      const hay = `${p.name} ${p.variety} ${p.origin} ${p.tags.join(" ")} ${farmer?.name ?? ""} ${farmer?.farmName ?? ""}`.toLowerCase();
-      if (q && !hay.includes(q)) return false;
-      if (filters.cat && p.category !== filters.cat) return false;
-      if (filters.organic && !p.organic) return false;
-      if (filters.farmerId && p.farmerId !== filters.farmerId) return false;
-      if (filters.inStock && p.stock <= 0) return false;
-      if (p.price < filters.minPrice || p.price > filters.maxPrice) return false;
-      if (p.distanceKm > filters.maxKm) return false;
-      if (!matchesFresh(daysSinceHarvest(p.harvestedOn), filters.fresh)) return false;
-      return true;
-    });
-    next = [...next].sort((a, b) => {
-      if (filters.sort === "priceAsc") return a.price - b.price;
-      if (filters.sort === "priceDesc") return b.price - a.price;
-      if (filters.sort === "fresh") return b.harvestedOn.localeCompare(a.harvestedOn);
-      if (filters.sort === "distance") return a.distanceKm - b.distanceKm;
-      if (filters.sort === "name") return a.name.localeCompare(b.name);
-      return b.rating - a.rating;
-    });
-    return next;
-  }, [filters]);
-
-  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const page = Math.min(filters.page, pages);
-  const slice = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const from = filtered.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  const to = Math.min(page * PAGE_SIZE, filtered.length);
-  const farmer = filters.farmerId ? farmerById(filters.farmerId) : null;
-
-  const onSearch = (e: FormEvent) => {
-    e.preventDefault();
-    patch({ q: query, page: 1 });
-  };
-
-  return (
-    <div className="pb-24">
-      <section className="border-b border-line bg-canvas">
-        <div className="container-app py-8 md:py-10">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-secondary">
-            {t("market.kicker")}
-          </p>
-          <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h1 className="font-display text-4xl text-ink md:text-5xl">{t("market.title")}</h1>
-              <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t("market.subtitle")}</p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <Link to="/wishlist" className="rounded-full bg-primary-soft px-3 py-1.5 text-primary">
-                {t("shop.wishTitle")}
-              </Link>
-              <Link to="/compare" className="rounded-full bg-cream-deep px-3 py-1.5 text-ink-soft">
-                {t("shop.compare")}
-              </Link>
-              <Link to="/box" className="rounded-full bg-nature-soft px-3 py-1.5 text-nature-dark">
-                {t("shop.boxTitle")}
-              </Link>
-              <span className="flex items-center gap-1 text-muted">
-                <MapPin size={12} /> {t("market.hub")}
-              </span>
-            </div>
-          </div>
-          <form
-            onSubmit={onSearch}
-            className="mt-6 flex items-center rounded-full border border-line bg-cream px-4 py-2"
-          >
-            <Search size={16} className="text-muted" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t("market.search")}
-              aria-label={t("market.searchAria")}
-              className="ml-2 w-full bg-transparent text-sm outline-none"
-            />
-          </form>
-          <div className="mt-6">
-            <CategoryStrip value={filters.cat} onChange={(cat) => patch({ cat, page: 1 })} />
-          </div>
-        </div>
-      </section>
-
-      <div className="container-app py-8 md:py-10">
-        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
-          <FilterPanel
-            value={filters}
-            onChange={patch}
-            onReset={() => setParams(new URLSearchParams(), { replace: true })}
-            open={filtersOpen}
-            onToggle={() => setFiltersOpen((v) => !v)}
-          />
-
-          <div>
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-ink">
-                  {t("market.results", { count: filtered.length })}
-                </p>
-                <p className="text-xs text-muted">
-                  {t("market.showing", { from, to, total: filtered.length })}
-                  {farmer ? ` · ${farmer.farmName}` : ""}
-                </p>
-              </div>
-              <label className="flex items-center gap-2 text-xs text-muted">
-                {t("market.sort")}
-                <Select
-                  value={filters.sort}
-                  onChange={(e) => patch({ sort: e.target.value as SortKey, page: 1 })}
-                  className="w-auto py-2"
-                >
-                  <option value="popular">{t("market.sortPopular")}</option>
-                  <option value="priceAsc">{t("market.sortPrice")}</option>
-                  <option value="priceDesc">{t("market.sortPriceDesc")}</option>
-                  <option value="fresh">{t("market.sortFresh")}</option>
-                  <option value="distance">{t("market.sortDistance")}</option>
-                  <option value="name">{t("market.sortName")}</option>
-                </Select>
-              </label>
-            </div>
-
-            {slice.length === 0 ? (
-              <EmptyState title={t("market.empty")} />
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-                {slice.map((p) => (
-                  <ProductCard key={p.id} product={p} />
-                ))}
-              </div>
-            )}
-            <Pagination page={page} pages={pages} onPage={(p) => patch({ page: p })} />
-            <RecentlyViewed />
-          </div>
-        </div>
-      </div>
-      <CompareBar />
-    </div>
-  );
+  return <div className="market-redesign pb-16">
+    <section className="market-hero"><div className="container-app market-hero-inner"><div className="market-hero-copy"><p className="market-eyebrow"><Leaf size={15} /> {t("marketplaceUi.eyebrow")}</p><h1>{t("marketplaceUi.title")}</h1><p className="market-hero-body">{t("marketplaceUi.body")}</p>{role === "farmer" && <Link to="/farmer/products/new" className="market-hero-link">{t("marketplaceUi.sellHarvest")} <ArrowRight size={16} /></Link>}</div><div className="market-hero-note"><span className="market-hero-note-line" /><p>{t("marketplaceUi.from")} {t("marketplaceUi.farmer")}</p><strong>ખેતરથી સીધું</strong><small>ભાવ, સ્થળ અને ઉપલબ્ધતાની સ્પષ્ટ માહિતી</small></div></div></section>
+    <section className="container-app market-tools"><form onSubmit={submitSearch} className="market-search"><Search size={19} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("marketplaceUi.searchPlaceholder")} aria-label={t("marketplaceUi.searchPlaceholder")} /><button type="submit">{t("marketplaceUi.searchButton")}</button></form><div className="market-browse-heading"><div><p className="market-eyebrow">{t("marketplaceUi.browseBy")}</p><h2>{t("marketplaceUi.allProducts")}</h2></div><SlidersHorizontal size={19} className="text-primary" /></div><CategoryStrip value={category} onChange={selectCategory} categories={categoryOptions} /></section>
+    <section className="container-app market-results"><div className="market-result-bar"><div><p className="market-eyebrow">DIRECT FARM</p><h2>{t("marketplaceUi.resultCount", { count: listings.length })}</h2></div><div className="market-mobile-filter"><Filter size={16} /> {t("marketplaceUi.filterTitle")}</div></div><div className="market-shop-layout"><aside className="market-filters"><div className="market-filter-heading"><h3>{t("marketplaceUi.filterTitle")}</h3><button type="button" onClick={clearFilters}>{t("marketplaceUi.clearFilters")}</button></div><div className="market-filter-block"><p>{t("marketplaceUi.categoryFilter")}</p><button type="button" className={!category ? "selected" : ""} onClick={() => selectCategory("")}>{t("marketplaceUi.allProducts")}</button>{categoryOptions.map((item) => <button key={item.id} type="button" className={category === item.id ? "selected" : ""} onClick={() => selectCategory(item.id as ProductCategory)}>{t(`categories.${item.id}`)}</button>)}</div><div className="market-filter-block"><p>{t("marketplaceUi.qualityFilter")}</p><label><input type="checkbox" checked={organicOnly} onChange={(event) => updateParams({ organic: event.target.checked ? "1" : null, page: "1" })} /> {t("marketplaceUi.organicOnly")}</label></div></aside><div className="market-products-area"><div className="market-controls"><label className="market-sort"><span>{t("marketplaceUi.sortLabel")}</span><select value={sort} onChange={(event) => updateParams({ sort: event.target.value, page: "1" })}><option value="newest">{t("marketplaceUi.newest")}</option><option value="priceAsc">{t("marketplaceUi.lowPrice")}</option><option value="priceDesc">{t("marketplaceUi.highPrice")}</option><option value="fresh">{t("marketplaceUi.freshest")}</option><option value="name">{t("marketplaceUi.name")}</option></select><ChevronDown size={15} /></label></div>{loading ? <EmptyState title={t("marketplaceUi.loading")} /> : visibleListings.length === 0 ? <EmptyState title={t("marketplaceUi.empty")} /> : <><div className="market-grid">{visibleListings.map((product) => <ProductCard key={product.id} product={product} />)}</div>{pageCount > 1 && <div className="market-pagination"><Button variant="secondary" disabled={page <= 1} onClick={() => updateParams({ page: String(page - 1) })}>{t("marketplaceUi.previous")}</Button><span>{page} / {pageCount}</span><Button variant="secondary" disabled={page >= pageCount} onClick={() => updateParams({ page: String(page + 1) })}>{t("marketplaceUi.next")}</Button></div>}</>}</div></div></section>
+  </div>;
 }

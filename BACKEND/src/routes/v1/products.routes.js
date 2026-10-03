@@ -2,6 +2,7 @@ import express from 'express';
 import {
   createProduct,
   listProducts,
+  listCategories,
   getProduct,
   updateProduct,
   deleteProduct
@@ -13,6 +14,7 @@ import { createProductSchema, updateProductSchema } from '../../validators/produ
 const router = express.Router();
 
 router.get('/', listProducts);
+router.get('/categories', listCategories);
 router.get('/:productId', getProduct);
 
 router.post('/', authenticate, authorize('farmer'), validateRequest(createProductSchema), createProduct);

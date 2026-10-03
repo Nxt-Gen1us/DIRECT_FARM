@@ -22,8 +22,8 @@ export function AdminReportsPage() {
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-accent text-primary">
                 <FileSpreadsheet size={18} />
               </span>
-              <h3 className="mt-3 font-display text-xl">{r.title}</h3>
-              <p className="text-xs text-muted">{r.period}</p>
+              <h3 className="mt-3 font-display text-xl">{t(`adminUi.report${r.kind === "gmv" ? "Gmv" : "Farm"}Title`)}</h3>
+              <p className="text-xs text-muted">{t(`adminUi.${r.kind === "gmv" ? "reportAprilPeriod" : "reportWeekPeriod"}`)}</p>
               <div className="mt-3 flex items-center justify-between">
                 <Badge tone={r.ready ? "nature" : "muted"}>{r.ready ? t("desk.ready") : t("desk.draft")}</Badge>
                 <Button

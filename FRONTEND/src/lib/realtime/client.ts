@@ -1,7 +1,7 @@
 import { io, type Socket } from "socket.io-client";
 import { RADIO_EVENTS, type OutgoingNote, type RealtimeClient, type RealtimeHandlers } from "./events";
 
-export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL as string | undefined;
+export const SOCKET_URL = (import.meta.env.VITE_WS_URL || import.meta.env.VITE_SOCKET_URL) as string | undefined;
 
 export function radioConfigured() {
   return Boolean(SOCKET_URL && SOCKET_URL.startsWith("http"));

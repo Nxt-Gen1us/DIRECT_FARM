@@ -11,7 +11,7 @@ export const listNotifications = async (req, res, next) => {
 
 export const markNotificationRead = async (req, res, next) => {
   try {
-    const notification = await notificationService.markRead(req.params.notificationId);
+    const notification = await notificationService.markRead(req.params.notificationId, req.user.id);
     res.status(200).json({ status: 'success', data: notification });
   } catch (error) {
     next(error);

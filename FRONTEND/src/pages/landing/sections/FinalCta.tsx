@@ -1,49 +1,41 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight } from "lucide-react";
-import { Reveal } from "../../../components/motion/Reveal";
-import { images } from "../../../assets";
-import { Button } from "../../../components/ui";
 
 export function FinalCta() {
   const { t } = useTranslation();
 
   return (
-    <section className="container-app pb-8 pt-4 md:pb-12">
-      <Reveal>
-        <div className="relative overflow-hidden rounded-[1.6rem]">
-          <img src={images.hero.farm} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary-deep/92 via-primary/80 to-nature-dark/70" />
-          <div className="relative grid gap-8 px-6 py-14 md:grid-cols-2 md:px-12 md:py-16">
-            <div className="md:col-span-2">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
-                {t("landing.cta.kicker")}
-              </p>
-              <h2 className="mt-2 max-w-2xl font-display text-3xl text-canvas md:text-4xl">
-                {t("landing.cta.title")}
-              </h2>
-            </div>
-            <div className="rounded-2xl border border-white/15 bg-canvas/10 p-6 backdrop-blur-sm">
-              <h3 className="font-display text-2xl text-canvas">{t("landing.cta.kitchens")}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-accent/85">{t("landing.cta.kitchensBody")}</p>
-              <Link to="/market" className="mt-5 inline-block">
-                <Button variant="cream">
-                  {t("landing.cta.kitchensCta")} <ArrowRight size={14} />
-                </Button>
-              </Link>
-            </div>
-            <div className="rounded-2xl border border-white/15 bg-canvas/10 p-6 backdrop-blur-sm">
-              <h3 className="font-display text-2xl text-canvas">{t("landing.cta.farms")}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-accent/85">{t("landing.cta.farmsBody")}</p>
-              <Link to="/login?role=farmer" className="mt-5 inline-block">
-                <Button variant="secondary">
-                  {t("landing.cta.farmsCta")} <ArrowRight size={14} />
-                </Button>
-              </Link>
-            </div>
-          </div>
+    <section className="bg-gradient-to-br from-green-900 via-green-800 to-green-700 py-20 lg:py-28 relative overflow-hidden">
+      {/* Decorative */}
+      <div className="absolute top-0 left-0 w-48 h-48 bg-yellow-400/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-64 h-64 bg-green-500/20 rounded-full blur-3xl" />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+        <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+          {t("landing.cta.title")}
+        </h2>
+        <p className="text-green-200/80 text-base sm:text-lg mb-10 max-w-xl mx-auto leading-relaxed">
+          {t("landing.cta.subtitle")}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link
+            to="/register?role=farmer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-green-950 font-bold text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300"
+            aria-label={t("landing.cta.farmerAriaLabel")}
+          >
+            {t("landing.cta.farmerBtn")}
+            <ArrowRight size={18} />
+          </Link>
+          <Link
+            to="/register?role=customer"
+            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-base transition-all backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+            aria-label={t("landing.cta.customerAriaLabel")}
+          >
+            {t("landing.cta.customerBtn")}
+          </Link>
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }

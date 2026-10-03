@@ -1,32 +1,32 @@
 /**
- * FarmConnect AI design tokens.
- * Source of truth matches the attached design-system board:
- * Playfair Display + Poppins, burgundy / harvest / wheat / nature.
+ * DIRECT FARM design tokens.
+ * Shared visual language: Playfair Display + Poppins, field green and harvest gold.
  */
 export const colors = {
-  primary: "#8B2626",
-  primaryDark: "#6A1B1B",
-  primaryDeep: "#4E1212",
-  primarySoft: "#F6E8E4",
-  primaryMid: "#B33A32",
-  secondary: "#EF6905",
-  secondaryDark: "#C45304",
-  secondarySoft: "#FFF0E3",
-  accent: "#F1E5A1",
-  accentDark: "#D9C56A",
-  accentSoft: "#FAF6DC",
+  primary: "#15803D",
+  primaryDark: "#166534",
+  primaryDeep: "#052E16",
+  primarySoft: "#DCFCE7",
+  primaryMid: "#22C55E",
+  secondary: "#A16207",
+  secondaryDark: "#854D0E",
+  secondarySoft: "#FEF3C7",
+  accent: "#FACC15",
+  accentDark: "#EAB308",
+  accentSoft: "#FEF9C3",
   nature: "#486C2F",
   natureDark: "#355022",
   natureSoft: "#EEF4E6",
   natureMid: "#6A8F48",
-  cream: "#FBF6EA",
-  creamDeep: "#F3EAD0",
-  canvas: "#FFFDF7",
-  ink: "#241610",
-  inkSoft: "#5C4638",
-  muted: "#8A7363",
-  line: "#E6D8B4",
-  card: "#FFFAF0",
+  cream: "#F5F8F2",
+  creamDeep: "#E8F1E5",
+  canvas: "#FFFFFF",
+  canvasSoft: "#F0F6EF",
+  ink: "#14231A",
+  inkSoft: "#405449",
+  muted: "#718179",
+  line: "#DCE8DF",
+  card: "#FFFFFF",
   danger: "#B42318",
   info: "#2F5D8C",
 } as const;
@@ -65,17 +65,17 @@ export const space = {
 } as const;
 
 export const radii = {
-  sm: "0.5rem",
-  md: "0.875rem",
-  lg: "1.25rem",
-  xl: "1.5rem",
+  sm: "0.25rem",
+  md: "0.375rem",
+  lg: "0.5rem",
+  xl: "0.5rem",
   pill: "999px",
 } as const;
 
 export const shadows = {
-  soft: "0 10px 30px -12px rgb(36 22 16 / 0.18)",
-  lift: "0 18px 40px -16px rgb(139 38 38 / 0.28)",
-  harvest: "0 10px 24px -12px rgb(239 105 5 / 0.5)",
+  soft: "0 10px 30px -12px rgb(20 35 26 / 0.16)",
+  lift: "0 18px 40px -16px rgb(21 128 61 / 0.24)",
+  harvest: "0 10px 24px -12px rgb(161 98 7 / 0.35)",
 } as const;
 
 export const breakpoints = {
@@ -90,9 +90,9 @@ export const breakpoints = {
 export type Breakpoint = keyof typeof breakpoints;
 
 export const colorSwatches = [
-  { name: "Primary", token: "primary", hex: colors.primary, role: "Brand burgundy" },
-  { name: "Secondary", token: "secondary", hex: colors.secondary, role: "Harvest orange" },
-  { name: "Accent", token: "accent", hex: colors.accent, role: "Wheat gold" },
+  { name: "Primary", token: "primary", hex: colors.primary, role: "Field green" },
+  { name: "Secondary", token: "secondary", hex: colors.secondary, role: "Harvest amber" },
+  { name: "Accent", token: "accent", hex: colors.accent, role: "Harvest gold" },
   { name: "Nature", token: "nature", hex: colors.nature, role: "Field green" },
   { name: "Cream", token: "cream", hex: colors.cream, role: "Canvas" },
   { name: "Ink", token: "ink", hex: colors.ink, role: "Body text" },

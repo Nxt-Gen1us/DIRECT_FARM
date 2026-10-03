@@ -26,3 +26,21 @@ export const getOrderPayment = async (req, res, next) => {
     next(error);
   }
 };
+
+export const createRazorpayOrder = async (req, res, next) => {
+  try {
+    const razorpayOrder = await paymentService.createRazorpayOrder(req.user.id, req.body.orderId);
+    res.status(201).json({ status: 'success', data: razorpayOrder });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const verifyRazorpayPayment = async (req, res, next) => {
+  try {
+    const payment = await paymentService.verifyRazorpayPayment(req.user.id, req.body);
+    res.status(200).json({ status: 'success', data: payment });
+  } catch (error) {
+    next(error);
+  }
+};

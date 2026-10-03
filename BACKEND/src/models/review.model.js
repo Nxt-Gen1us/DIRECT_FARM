@@ -12,6 +12,7 @@ const reviewSchema = new mongoose.Schema({
 reviewSchema.index({ author: 1 });
 reviewSchema.index({ farmer: 1 });
 reviewSchema.index({ product: 1 });
+reviewSchema.index({ author: 1, product: 1 }, { unique: true, partialFilterExpression: { product: { $exists: true } } });
 
 const Review = mongoose.model('Review', reviewSchema);
 export default Review;

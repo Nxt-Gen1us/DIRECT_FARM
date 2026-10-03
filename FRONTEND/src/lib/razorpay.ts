@@ -50,12 +50,13 @@ function loadScript(): Promise<boolean> {
  */
 export async function openRazorpayCheckout(opts: {
   amountPaise: number;
+  razorpayOrderId?: string;
   name: string;
   contact?: string;
   email?: string;
   note: string;
 }): Promise<
-  | { ok: true; paymentId: string }
+  | { ok: true; paymentId: string; razorpayOrderId: string; signature: string }
   | { ok: false; reason: "no-key" | "script" | "dismissed" }
 > {
   const key = RAZORPAY_KEY;
@@ -69,13 +70,23 @@ export async function openRazorpayCheckout(opts: {
       key,
       amount: opts.amountPaise,
       currency: "INR",
-      name: "FarmConnect AI",
+      name: "DIRECT FARM",
       description: opts.note,
+      order_id: opts.razorpayOrderId,
       prefill: { name: opts.name, contact: opts.contact, email: opts.email },
-      notes: { source: "farmconnect-checkout" },
-      theme: { color: "#8B2626" },
+      notes: { source: "directfarm-checkout" },
+      theme: { color: "#15803D" },
       handler: (response) => {
-        resolve({ ok: true, paymentId: response.razorpay_payment_id });
+        if (!response.razorpay_order_id || !response.razorpay_signature) {
+          resolve({ ok: false, reason: "script" });
+          return;
+        }
+        resolve({
+          ok: true,
+          paymentId: response.razorpay_payment_id,
+          razorpayOrderId: response.razorpay_order_id,
+          signature: response.razorpay_signature,
+        });
       },
       modal: {
         ondismiss: () => resolve({ ok: false, reason: "dismissed" }),

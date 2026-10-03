@@ -1,94 +1,26 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { deskUsers } from "../../data/admin";
+import { deskUsers, type DeskUser } from "../../data/admin";
 import { farmers } from "../../data/farmers";
 import { formatDate } from "../../lib/format";
 import type { Role } from "../../lib/types";
 import { Badge } from "../../components/ui/Badge";
 import { DeskTable } from "../../components/admin/DeskTable";
+import { apiConfigured } from "../../lib/api";
+import { createAdminUser, deleteAdminUser, fetchAdminUsers, updateAdminUser, type AdminUser } from "../../lib/api/admin";
+
+type FormState = { id?: string; firstName: string; lastName: string; email: string; password: string; role: Role; isVerified: boolean };
+const emptyForm: FormState = { firstName: "", lastName: "", email: "", password: "", role: "customer", isVerified: false };
+function toDeskUser(user: AdminUser): DeskUser { return { id: user._id, name: `${user.firstName} ${user.lastName ?? ""}`.trim(), email: user.email, phone: "", role: user.role, place: "—", status: user.isVerified ? "active" : "invited", joinedAt: user.createdAt, avatar: "/images/farmer-portrait.jpg" }; }
 
 export function AdminPeoplePage({ mode }: { mode: "users" | "farmers" | "customers" }) {
   const { t } = useTranslation();
-  const [q, setQ] = useState("");
-  const [role, setRole] = useState<Role | "all">("all");
-
-  const people = useMemo(() => {
-    let list = deskUsers;
-    if (mode === "farmers") list = deskUsers.filter((u) => u.role === "farmer");
-    if (mode === "customers") list = deskUsers.filter((u) => u.role === "customer");
-    if (role !== "all") list = list.filter((u) => u.role === role);
-    const needle = q.trim().toLowerCase();
-    if (needle) {
-      list = list.filter((u) =>
-        `${u.name} ${u.email} ${u.place}`.toLowerCase().includes(needle),
-      );
-    }
-    return list;
-  }, [mode, q, role]);
-
-  const title =
-    mode === "farmers" ? t("desk.farmers") : mode === "customers" ? t("desk.customers") : t("desk.users");
-
-  return (
-    <div>
-      <h2 className="font-display text-3xl">{title}</h2>
-      <p className="mt-1 text-sm text-ink-soft">{t("desk.peopleLede")}</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={t("desk.searchPeople")}
-          className="min-w-[200px] flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm outline-none"
-        />
-        {mode === "users" && (
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as Role | "all")}
-            className="rounded-full border border-line bg-canvas px-3 py-2 text-sm"
-          >
-            <option value="all">{t("desk.allRoles")}</option>
-            <option value="customer">{t("roles.customer")}</option>
-            <option value="farmer">{t("roles.farmer")}</option>
-            <option value="admin">{t("roles.admin")}</option>
-          </select>
-        )}
-      </div>
-      <div className="mt-5">
-        <DeskTable head={[t("desk.col.name"), t("desk.col.role"), t("desk.col.place"), t("desk.col.joined"), t("desk.col.status")]}>
-          {people.map((u) => {
-            const farm = farmers.find((f) => f.userId === u.id || f.name === u.name);
-            return (
-              <tr key={u.id} className="border-t border-line">
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <img src={u.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
-                    <div>
-                      <p className="font-medium">{u.name}</p>
-                      <p className="text-[11px] text-muted">{u.email}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3">{t(`roles.${u.role}`)}</td>
-                <td className="px-4 py-3 text-ink-soft">{u.place}</td>
-                <td className="px-4 py-3 text-ink-soft">{formatDate(u.joinedAt)}</td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <Badge tone={u.status === "active" ? "nature" : u.status === "held" ? "secondary" : "muted"}>
-                      {t(`desk.ustatus.${u.status}`)}
-                    </Badge>
-                    {farm && (
-                      <Link to={`/farmers/${farm.id}`} className="text-xs text-primary">
-                        {t("desk.openFarm")}
-                      </Link>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
-        </DeskTable>
-      </div>
-    </div>
-  );
+  const [q, setQ] = useState(""); const [role, setRole] = useState<Role | "all">("all"); const [people, setPeople] = useState<DeskUser[]>(apiConfigured() ? [] : deskUsers); const [form, setForm] = useState<FormState | null>(null); const [busy, setBusy] = useState(false);
+  useEffect(() => { if (apiConfigured()) void fetchAdminUsers().then((users) => setPeople(users.map(toDeskUser))).catch(() => undefined); }, []);
+  const filtered = useMemo(() => people.filter((u) => (mode === "farmers" ? u.role === "farmer" : mode === "customers" ? u.role === "customer" : role === "all" || u.role === role) && `${u.name} ${u.email} ${u.place}`.toLowerCase().includes(q.trim().toLowerCase())), [mode, people, q, role]);
+  const title = mode === "farmers" ? t("desk.farmers") : mode === "customers" ? t("desk.customers") : t("desk.users");
+  const save = async () => { if (!form?.firstName || !form.email || (!form.id && form.password.length < 8)) return; if (!apiConfigured()) { window.alert(t("adminUi.databaseUnavailable")); return; } setBusy(true); try { const saved = form.id ? await updateAdminUser(form.id, { firstName: form.firstName, lastName: form.lastName, email: form.email, role: form.role, isVerified: form.isVerified }) : await createAdminUser({ firstName: form.firstName, lastName: form.lastName, email: form.email, password: form.password, role: form.role, isVerified: form.isVerified }); const next = toDeskUser(saved); setPeople((current) => form.id ? current.map((item) => item.id === form.id ? next : item) : [next, ...current]); window.alert(form.id ? t("adminUi.updated") : t("adminUi.created")); setForm(null); } catch { window.alert(t("adminUi.operationFailed")); } finally { setBusy(false); } };
+  const remove = async (user: DeskUser) => { if (!window.confirm(t("adminUi.deleteAccountConfirm"))) return; if (!apiConfigured()) { window.alert(t("adminUi.databaseUnavailable")); return; } try { await deleteAdminUser(user.id); setPeople((current) => current.filter((item) => item.id !== user.id)); window.alert(t("adminUi.deleted")); } catch { window.alert(t("adminUi.operationFailed")); } };
+  return <div className="admin-simple-page"><div className="admin-page-intro"><p className="admin-eyebrow">DIRECT FARM</p><h2>{title}</h2><p>{t("desk.peopleLede")}</p></div><div className="admin-crud-toolbar"><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("desk.searchPeople")} /><select value={role} onChange={(e) => setRole(e.target.value as Role | "all")}><option value="all">{t("desk.allRoles")}</option><option value="customer">{t("roles.customer")}</option><option value="farmer">{t("roles.farmer")}</option><option value="admin">{t("roles.admin")}</option></select><button type="button" onClick={() => setForm(emptyForm)}>{t("adminUi.addAccount")}</button></div>{form && <section className="admin-crud-form"><h3>{form.id ? t("adminUi.editAccount") : t("adminUi.newAccount")}</h3><div className="admin-form-grid"><input placeholder={t("adminUi.firstName")} value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} /><input placeholder={t("adminUi.lastName")} value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} /><input placeholder={t("adminUi.email")} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />{!form.id && <input placeholder={t("adminUi.password")} type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />}<select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as Role })}><option value="customer">{t("roles.customer")}</option><option value="farmer">{t("roles.farmer")}</option><option value="admin">{t("roles.admin")}</option></select></div><label className="admin-check"><input type="checkbox" checked={form.isVerified} onChange={(e) => setForm({ ...form, isVerified: e.target.checked })} /> {t("adminUi.verifiedAccount")}</label><div className="admin-form-actions"><button type="button" onClick={() => setForm(null)}>{t("adminUi.cancel")}</button><button type="button" disabled={busy} onClick={() => void save()}>{busy ? t("adminUi.saving") : t("adminUi.save")}</button></div></section>}<div className="admin-crud-table"><DeskTable head={[t("desk.col.name"), t("desk.col.role"), t("desk.col.place"), t("desk.col.joined"), t("desk.col.status"), t("adminUi.action")]}>{filtered.map((u) => { const farm = farmers.find((f) => f.userId === u.id || f.name === u.name); return <tr key={u.id} className="border-t border-line"><td className="px-4 py-3"><div className="flex items-center gap-2"><img src={u.avatar} alt="" className="h-8 w-8 rounded-full object-cover" /><div><p className="font-medium">{u.name}</p><p className="text-[11px] text-muted">{u.email}</p></div></div></td><td className="px-4 py-3">{t(`roles.${u.role}`)}</td><td className="px-4 py-3 text-ink-soft">{u.place}</td><td className="px-4 py-3 text-ink-soft">{formatDate(u.joinedAt)}</td><td className="px-4 py-3"><Badge tone={u.status === "active" ? "nature" : u.status === "held" ? "secondary" : "muted"}>{t(`desk.ustatus.${u.status}`)}</Badge>{farm && <Link to={`/farmers/${farm.id}`} className="ml-2 text-xs text-primary">{t("desk.openFarm")}</Link>}</td><td className="px-4 py-3"><div className="admin-row-actions"><button type="button" onClick={() => setForm({ id: u.id, firstName: u.name.split(" ")[0] ?? u.name, lastName: u.name.split(" ").slice(1).join(" "), email: u.email, password: "", role: u.role, isVerified: u.status === "active" })}>{t("adminUi.edit")}</button><button type="button" onClick={() => void remove(u)}>{t("adminUi.delete")}</button></div></td></tr>; })}</DeskTable></div></div>;
 }

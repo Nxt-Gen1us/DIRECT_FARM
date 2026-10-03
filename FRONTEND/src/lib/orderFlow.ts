@@ -83,7 +83,7 @@ export function buildOrderFromCart(opts: {
     farmerName: farmer?.name ?? "Farm collective",
     items,
     status: "pending",
-    paymentStatus: opts.channel === "cod" ? "pending" : "pending",
+    paymentStatus: opts.channel === "wallet" ? "paid" : "pending",
     paymentMethod: opts.method,
     subtotal,
     delivery,

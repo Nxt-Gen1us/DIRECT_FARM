@@ -110,9 +110,11 @@ export function RegisterPage() {
     if (!result.ok) {
       setErrors(result.errors);
       setFormError(
-        result.errors.email === "emailTaken"
-          ? t("register.errors.emailTaken")
-          : t("register.reviewBody"),
+        result.errors._form 
+          ? (result.errors._form as string)
+          : result.errors.email === "emailTaken"
+            ? t("register.errors.emailTaken")
+            : t("register.reviewBody"),
       );
       if (result.errors.email || result.errors.password || result.errors.name) setStep(1);
       else if (result.errors.location || result.errors.state) setStep(2);
@@ -161,16 +163,16 @@ export function RegisterPage() {
 
   return (
     <AuthShell role={draft.path}>
-      <p className="text-xs font-medium uppercase tracking-[0.2em] text-secondary">
+      <p className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.2em] text-secondary">
         {t("register.kicker")}
       </p>
-      <h1 className="mt-2 font-display text-4xl text-ink">{t("register.title")}</h1>
-      <p className="mt-2 text-sm leading-relaxed text-ink-soft">{t("register.subtitle")}</p>
-      <div className="mt-6">
+      <h1 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl text-ink">{t("register.title")}</h1>
+      <p className="mt-2 text-xs sm:text-sm leading-relaxed text-ink-soft">{t("register.subtitle")}</p>
+      <div className="mt-5 sm:mt-6">
         <StepBar steps={steps} current={step} />
       </div>
 
-      <form className="space-y-4" onSubmit={onSubmit} noValidate>
+      <form className="space-y-3 sm:space-y-4" onSubmit={onSubmit} noValidate>
         {current === "path" && (
           <PathSelect
             value={draft.path}
@@ -326,7 +328,7 @@ export function RegisterPage() {
                 aria-invalid={Boolean(errors.farmName)}
               />
             </Field>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2">
               <Field label={t("register.farmSize")} error={errLabel(t, errors.farmSize)}>
                 <Input
                   type="number"
@@ -379,7 +381,7 @@ export function RegisterPage() {
               </div>
             </Field>
             <Field label={t("register.organic")}>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 {(["yes", "no", "progress"] as const).map((opt) => (
                   <button
                     key={opt}
@@ -389,7 +391,7 @@ export function RegisterPage() {
                       clearField("certNumber");
                     }}
                     className={cn(
-                      "rounded-2xl border px-2 py-2 text-xs",
+                      "rounded-xl sm:rounded-2xl border px-2 py-1.5 sm:py-2 text-[10px] sm:text-xs",
                       draft.organic === opt
                         ? "border-primary bg-primary-soft text-primary"
                         : "border-line bg-canvas text-ink-soft",
@@ -425,12 +427,12 @@ export function RegisterPage() {
 
         {current === "docs" && (
           <>
-            <p className="text-sm text-ink-soft">{t("register.docsHint")}</p>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <p className="text-xs sm:text-sm text-ink-soft">{t("register.docsHint")}</p>
+            <div className="grid gap-2.5 sm:gap-3 sm:grid-cols-2">
               {DOC_KINDS.map((kind) => (
                 <label
                   key={kind}
-                  className="cursor-pointer rounded-2xl border border-dashed border-line bg-canvas p-3 text-sm hover:border-secondary/50"
+                  className="cursor-pointer rounded-xl sm:rounded-2xl border border-dashed border-line bg-canvas p-2.5 sm:p-3 text-xs sm:text-sm hover:border-secondary/50"
                 >
                   <p className="font-medium text-ink">
                     {t(
@@ -443,7 +445,7 @@ export function RegisterPage() {
                             : "register.otherDoc",
                     )}
                   </p>
-                  <p className="mt-1 text-xs text-muted">{t("register.addFile")}</p>
+                  <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-muted">{t("register.addFile")}</p>
                   <input
                     type="file"
                     accept={allowedDocTypes.join(",")}
@@ -457,25 +459,27 @@ export function RegisterPage() {
               ))}
             </div>
             {draft.documents.length > 0 && (
-              <ul className="space-y-2">
+              <ul className="space-y-1.5 sm:space-y-2">
                 {draft.documents.map((doc) => (
                   <li
                     key={doc.id}
-                    className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-canvas px-3 py-2 text-sm"
+                    className="flex items-center justify-between gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-line bg-canvas px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm"
                   >
-                    <span className="flex min-w-0 items-center gap-2">
-                      <FileText size={14} className="shrink-0 text-secondary" />
-                      <span className="truncate">{doc.name}</span>
-                      <span className="text-[10px] uppercase text-muted">
+                    <span className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+                      <FileText size={13} className="shrink-0 text-secondary sm:hidden" />
+                      <FileText size={14} className="shrink-0 text-secondary hidden sm:block" />
+                      <span className="truncate text-[10px] sm:text-xs">{doc.name}</span>
+                      <span className="text-[9px] sm:text-[10px] uppercase text-muted whitespace-nowrap">
                         {doc.kind} · {(doc.size / 1024).toFixed(0)} KB
                       </span>
                     </span>
                     <button
                       type="button"
                       onClick={() => patch({ documents: draft.documents.filter((d) => d.id !== doc.id) })}
-                      className="text-primary"
+                      className="text-primary shrink-0"
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={13} className="sm:hidden" />
+                      <Trash2 size={14} className="hidden sm:block" />
                     </button>
                   </li>
                 ))}
@@ -493,10 +497,10 @@ export function RegisterPage() {
         )}
 
         {current === "review" && (
-          <div className="space-y-3 rounded-[1.25rem] border border-line bg-canvas p-4 text-sm">
-            <p className="font-display text-2xl text-ink">{t("register.reviewTitle")}</p>
+          <div className="space-y-2.5 sm:space-y-3 rounded-xl sm:rounded-[1.25rem] border border-line bg-canvas p-3 sm:p-4 text-xs sm:text-sm">
+            <p className="font-display text-xl sm:text-2xl text-ink">{t("register.reviewTitle")}</p>
             <p className="text-ink-soft">{t("register.reviewBody")}</p>
-            <dl className="grid grid-cols-2 gap-2 text-xs">
+            <dl className="grid grid-cols-2 gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
               {[
                 [t(`roles.${draft.path}`), t(`register.path${draft.path === "farmer" ? "Farmer" : "Customer"}`)],
                 [t("auth.name"), draft.name],
@@ -520,23 +524,24 @@ export function RegisterPage() {
                     ] as [string, string][])
                   : []),
               ].map(([k, v]) => (
-                <div key={String(k)} className="rounded-xl bg-cream px-3 py-2">
-                  <dt className="text-[10px] uppercase tracking-wider text-muted">{k}</dt>
-                  <dd className="mt-0.5 font-medium text-ink">{v}</dd>
+                <div key={String(k)} className="rounded-lg sm:rounded-xl bg-cream px-2 sm:px-3 py-1.5 sm:py-2">
+                  <dt className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted">{k}</dt>
+                  <dd className="mt-0.5 text-[10px] sm:text-xs font-medium text-ink">{v}</dd>
                 </div>
               ))}
             </dl>
-            <p className="text-[11px] leading-relaxed text-muted">{t("register.serverNote")}</p>
+            <p className="text-[10px] sm:text-[11px] leading-relaxed text-muted">{t("register.serverNote")}</p>
           </div>
         )}
 
         {formError && (
-          <p className="flex items-start gap-2 rounded-2xl bg-primary-soft px-3 py-2 text-sm text-primary">
-            <ShieldAlert size={16} className="mt-0.5 shrink-0" /> {formError}
+          <p className="flex items-start gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl bg-primary-soft px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-primary">
+            <ShieldAlert size={14} className="mt-0.5 shrink-0 sm:hidden" />
+            <ShieldAlert size={16} className="mt-0.5 shrink-0 hidden sm:block" /> {formError}
           </p>
         )}
 
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-2 sm:gap-3 pt-2">
           {step > 0 && (
             <Button
               type="button"
@@ -558,7 +563,7 @@ export function RegisterPage() {
         </div>
       </form>
 
-      <p className="mt-6 text-center text-sm text-ink-soft">
+      <p className="mt-5 sm:mt-6 text-center text-xs sm:text-sm text-ink-soft">
         {t("auth.hasAccount")}{" "}
         <Link to={`/login?role=${draft.path}`} className="font-medium text-primary hover:underline">
           {t("auth.login")}

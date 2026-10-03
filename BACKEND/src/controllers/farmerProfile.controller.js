@@ -1,5 +1,23 @@
 import farmerProfileService from '../services/farmerProfile.service.js';
 
+export const listFarmerProfiles = async (req, res, next) => {
+  try {
+    const profiles = await farmerProfileService.listProfiles({}, req.query);
+    res.status(200).json({ status: 'success', data: profiles });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFarmerProfileById = async (req, res, next) => {
+  try {
+    const profile = await farmerProfileService.getById(req.params.profileId);
+    res.status(200).json({ status: 'success', data: profile });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getFarmerProfile = async (req, res, next) => {
   try {
     const profile = await farmerProfileService.getByUser(req.user.id);

@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
 
 const messageSchema = new mongoose.Schema({
-  conversationId: { type: mongoose.Schema.Types.ObjectId, required: true, index: true },
+  // Deterministic, participant-scoped id: `<smaller-user-id>:<larger-user-id>`.
+  // It avoids exposing arbitrary conversation records and supports a new chat
+  // before either participant has sent a message.
+  conversationId: { type: String, required: true, index: true },
   sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   receiver: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   content: { type: String },

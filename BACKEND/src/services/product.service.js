@@ -13,6 +13,11 @@ class ProductService {
     return productRepository.findAll(filters, options);
   }
 
+  async listCategories() {
+    const categories = await productRepository.listCategories();
+    return categories.filter(Boolean).sort((a, b) => a.localeCompare(b));
+  }
+
   async updateProduct(productId, updateData) {
     return productRepository.updateById(productId, updateData);
   }

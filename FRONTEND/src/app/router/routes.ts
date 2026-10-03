@@ -10,16 +10,13 @@ export type AppRoute = {
     | "orders"
     | "payments"
     | "chat"
-    | "map"
-    | "ai"
     | "passport"
     | "weather"
-    | "sustainability"
     | "farmer"
     | "admin"
     | "account"
     | "auth"
-    | "premium";
+    ;
   roles: Role[] | "all";
   placeholder: boolean;
 };
@@ -47,15 +44,6 @@ export const appRoutes: AppRoute[] = [
   { path: "/chat", name: "Field radio", module: "chat", roles: "all", placeholder: false },
   { path: "/chat/:threadId", name: "Thread", module: "chat", roles: "all", placeholder: false },
   { path: "/notices", name: "Notices", module: "chat", roles: "all", placeholder: false },
-  { path: "/map", name: "Smart map", module: "map", roles: "all", placeholder: false },
-  { path: "/map/farmers", name: "Nearby farmers", module: "map", roles: "all", placeholder: false },
-  { path: "/map/customers", name: "Nearby kitchens", module: "map", roles: "all", placeholder: false },
-  { path: "/map/farms", name: "Farm locations", module: "map", roles: "all", placeholder: false },
-  { path: "/map/lots", name: "Lot locations", module: "map", roles: "all", placeholder: false },
-  { path: "/map/routes", name: "Delivery routes", module: "map", roles: "all", placeholder: false },
-  { path: "/map/live", name: "Live crates", module: "map", roles: "all", placeholder: false },
-  { path: "/map/track/:orderId", name: "Track crate", module: "map", roles: "all", placeholder: false },
-  { path: "/ai", name: "AI Agriculture", module: "ai", roles: "all", placeholder: false },
   { path: "/passport", name: "Crop Passport", module: "passport", roles: "all", placeholder: false },
   { path: "/passport/:id", name: "Passport detail", module: "passport", roles: "all", placeholder: false },
   { path: "/intel", name: "Field intel", module: "weather", roles: "all", placeholder: false },
@@ -64,16 +52,6 @@ export const appRoutes: AppRoute[] = [
   { path: "/calendar", name: "Crop calendar", module: "weather", roles: "all", placeholder: false },
   { path: "/reminders", name: "Reminders", module: "weather", roles: "all", placeholder: false },
   { path: "/schemes", name: "Schemes", module: "weather", roles: "all", placeholder: false },
-  { path: "/sustainability", name: "Sustainability", module: "sustainability", roles: "all", placeholder: false },
-  { path: "/premium", name: "Premium desk", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/auction", name: "Live auction", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/community", name: "Farmer circle", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/experts", name: "Experts", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/forecast", name: "Season forecast", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/contracts", name: "Contracts", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/equipment", name: "Machines", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/warehouse", name: "Warehouse", module: "premium", roles: "all", placeholder: false },
-  { path: "/premium/cold", name: "Cold store", module: "premium", roles: "all", placeholder: false },
   { path: "/farmer", name: "Farmer desk", module: "farmer", roles: ["farmer", "admin"], placeholder: false },
   { path: "/farmer/products", name: "Lot book", module: "farmer", roles: ["farmer", "admin"], placeholder: false },
   { path: "/farmer/products/new", name: "Add lot", module: "farmer", roles: ["farmer", "admin"], placeholder: false },
@@ -90,8 +68,6 @@ export const appRoutes: AppRoute[] = [
   { path: "/admin/verify", name: "Verification", module: "admin", roles: ["admin"], placeholder: false },
   { path: "/admin/complaints", name: "Complaints", module: "admin", roles: ["admin"], placeholder: false },
   { path: "/admin/reports", name: "Reports", module: "admin", roles: ["admin"], placeholder: false },
-  { path: "/admin/ai", name: "AI use", module: "admin", roles: ["admin"], placeholder: false },
-  { path: "/admin/sustain", name: "Earth ledger", module: "admin", roles: ["admin"], placeholder: false },
   { path: "/account", name: "Account", module: "account", roles: "all", placeholder: false },
   { path: "/login", name: "Sign in", module: "auth", roles: "all", placeholder: false },
   { path: "/register", name: "Register", module: "auth", roles: "all", placeholder: false },

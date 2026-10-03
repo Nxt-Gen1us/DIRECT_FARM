@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Layers, MonitorSmartphone, Palette, Type } from "lucide-react";
 import { images } from "../../assets";
-import { appRoutes } from "../../app/router/routes";
+import { appRoutes, type AppRoute } from "../../app/router/routes";
 import { useViewport } from "../../hooks/useMediaQuery";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useApp } from "../../app/providers/AppProviders";
@@ -18,6 +18,21 @@ const folders = [
   "src/pages/foundation · src/pages/placeholders",
   "public/images · public/favicon.svg",
 ];
+
+const routeModuleLabels: Record<AppRoute["module"], string> = {
+  home: "routes.home",
+  system: "routes.designSystem",
+  marketplace: "routes.marketplace",
+  orders: "routes.orders",
+  payments: "routes.payments",
+  chat: "routes.fieldRadio",
+  passport: "routes.cropPassport",
+  weather: "routes.fieldIntel",
+  farmer: "routes.farmerDesk",
+  admin: "routes.adminDesk",
+  account: "routes.account",
+  auth: "routes.signIn",
+};
 
 export function DesignSystemPage() {
   const { t } = useTranslation();
@@ -93,7 +108,7 @@ export function DesignSystemPage() {
               <Badge tone="primary">{t("common.verified")}</Badge>
               <Badge tone="nature">{t("common.organic")}</Badge>
               <Badge tone="secondary">{t("common.heatWatch")}</Badge>
-              <Badge>Lot NSK-15</Badge>
+              <Badge>{t("foundation.sampleLot")}</Badge>
             </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <Field label={t("common.searchHarvest")}>
@@ -161,8 +176,8 @@ export function DesignSystemPage() {
             <Link key={route.path} to={route.path.replace(":id", "sample")}>
               <Card className="p-4 transition hover:-translate-y-0.5">
                 <p className="font-mono text-xs text-muted">{route.path}</p>
-                <p className="mt-1 font-display text-xl">{route.name}</p>
-                <p className="mt-1 text-xs uppercase tracking-wider text-secondary">{route.module}</p>
+                <p className="mt-1 font-display text-xl">{t(routeModuleLabels[route.module])}</p>
+                <p className="mt-1 text-xs uppercase tracking-wider text-secondary">{t("common.open")}</p>
               </Card>
             </Link>
           ))}

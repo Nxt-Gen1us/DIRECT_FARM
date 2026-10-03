@@ -12,8 +12,12 @@ class NotificationRepository {
       .sort(options.sort || { createdAt: -1 });
   }
 
-  async markRead(notificationId) {
-    return Notification.findByIdAndUpdate(notificationId, { readAt: new Date() }, { new: true });
+  async markRead(notificationId, userId) {
+    return Notification.findOneAndUpdate(
+      { _id: notificationId, user: userId },
+      { readAt: new Date() },
+      { new: true }
+    );
   }
 
   async markAllRead(userId) {

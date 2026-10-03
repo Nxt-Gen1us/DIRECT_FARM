@@ -1,51 +1,50 @@
 import { useTranslation } from "react-i18next";
-import { Package, QrCode, Sparkles, Sprout } from "lucide-react";
-import { Reveal, Stagger, StaggerItem } from "../../../components/motion/Reveal";
-import { howSteps } from "../../../data/landing";
-
-const icons = {
-  sprout: Sprout,
-  spark: Sparkles,
-  qr: QrCode,
-  crate: Package,
-};
+import { Camera, Coins, ShoppingCart, Truck } from "lucide-react";
 
 export function HowItWorks() {
   const { t } = useTranslation();
 
-  return (
-    <section id="how" className="container-app scroll-mt-24 py-16 md:py-20">
-      <Reveal>
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-secondary">
-          {t("landing.how.kicker")}
-        </p>
-        <h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">{t("landing.how.title")}</h2>
-        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-ink-soft md:text-base">
-          {t("landing.how.subtitle")}
-        </p>
-      </Reveal>
+  const steps = [
+    { icon: Camera, title: t("landing.how.s1title"), desc: t("landing.how.s1desc"), num: "1" },
+    { icon: Coins, title: t("landing.how.s2title"), desc: t("landing.how.s2desc"), num: "2" },
+    { icon: ShoppingCart, title: t("landing.how.s3title"), desc: t("landing.how.s3desc"), num: "3" },
+    { icon: Truck, title: t("landing.how.s4title"), desc: t("landing.how.s4desc"), num: "4" },
+  ];
 
-      <Stagger className="relative mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-4" delay={0.1}>
-        <span className="pointer-events-none absolute left-[12%] right-[12%] top-10 hidden h-px bg-gradient-to-r from-transparent via-secondary/40 to-transparent lg:block" />
-        {howSteps.map((step) => {
-          const Icon = icons[step.icon as keyof typeof icons];
-          return (
-            <StaggerItem key={step.id}>
-              <article className="group relative h-full overflow-hidden rounded-[1.25rem] border border-line/70 bg-card p-6 shadow-[0_10px_30px_-16px_rgb(36_22_16_/_0.16)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_18px_40px_-16px_rgb(139_38_38_/_0.2)]">
-                <div className="flex items-start justify-between">
-                  <span className="grid h-11 w-11 place-items-center rounded-2xl bg-accent text-primary">
-                    <Icon size={18} />
-                  </span>
-                  <span className="font-display text-3xl text-cream-deep">{step.n}</span>
+  return (
+    <section id="how-it-works" className="bg-green-50 py-16 lg:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-gray-900">
+            {t("landing.how.title")}
+          </h2>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <div key={i} className="relative">
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-10 left-[calc(100%-1rem)] w-8 border-t-2 border-dashed border-green-300 z-0" />
+                )}
+                <div className="bg-white rounded-2xl p-6 text-center shadow-sm border border-green-100 hover:shadow-md transition-shadow h-full relative z-10">
+                  <div className="w-8 h-8 rounded-full bg-green-700 text-white text-sm font-bold flex items-center justify-center mx-auto mb-4">
+                    {step.num}
+                  </div>
+                  <div className="mb-4 flex justify-center">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-green-700">
+                      <Icon size={22} />
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg mb-2">{step.title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
                 </div>
-                <h3 className="mt-6 font-display text-2xl text-ink">{t(step.titleKey)}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-ink-soft">{t(step.bodyKey)}</p>
-                <span className="absolute bottom-0 left-0 h-1 w-0 bg-secondary transition-all duration-500 group-hover:w-full" />
-              </article>
-            </StaggerItem>
-          );
-        })}
-      </Stagger>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </section>
   );
 }

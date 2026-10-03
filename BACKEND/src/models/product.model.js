@@ -19,6 +19,12 @@ const productSchema = new mongoose.Schema({
   harvestDate: { type: Date },
   freshnessScore: { type: Number, default: 0 },
   isOrganic: { type: Boolean, default: false },
+  variety: { type: String },
+  unit: { type: String, default: 'kg' },
+  minQty: { type: Number, default: 1 },
+  tags: [{ type: String }],
+  origin: { type: String },
+  passportId: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

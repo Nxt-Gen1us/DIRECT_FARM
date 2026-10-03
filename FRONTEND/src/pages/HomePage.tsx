@@ -1,163 +1,34 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, Leaf, QrCode, Sun } from "lucide-react";
+import { ArrowRight, BadgeCheck, ChevronRight, Leaf, Search, ShieldCheck, Truck } from "lucide-react";
 import { products, categories } from "../data/products";
-import { farmers } from "../data/farmers";
 import { ProductCard } from "../components/marketplace/ProductCard";
 import { Button } from "../components/ui/Button";
-import { Card, SectionHead } from "../components/ui/Card";
+import { SectionHead } from "../components/ui/Card";
 
 export function HomePage() {
-  const { t } = useTranslation();
   const featured = products.slice(0, 8);
-
   return (
-    <div>
-      <section className="relative overflow-hidden">
-        <img
-          src="/images/hero-farm.jpg"
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/80 via-primary-deep/70 to-primary/20" />
+    <div className="storefront">
+      <section className="store-hero relative overflow-hidden">
+        <img src="/images/hero-farm.jpg" alt="Fresh produce growing on a farm" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#102319]/90 via-[#102319]/60 to-transparent" />
         <div className="container-app relative grid items-center gap-10 py-20 md:grid-cols-12 md:py-28">
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="md:col-span-7"
-          >
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.22em] text-accent">
-              {t("hero.kicker")}
-            </p>
-            <h1 className="font-display text-4xl leading-[1.1] text-canvas sm:text-5xl lg:text-6xl">
-              {t("hero.title")}
-            </h1>
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-accent/90 md:text-base">
-              {t("hero.subtitle")}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/market">
-                <Button variant="secondary">
-                  {t("hero.cta")} <ArrowRight size={16} />
-                </Button>
-              </Link>
-              <Link to="/farmer">
-                <Button variant="cream">{t("hero.cta2")}</Button>
-              </Link>
-            </div>
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="md:col-span-7">
+            <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-yellow-200 backdrop-blur-sm"><Leaf size={13} /> Fresh from local farms</p>
+            <h1 className="font-display text-4xl leading-[1.08] text-white sm:text-5xl lg:text-7xl">Better food starts <span className="text-yellow-300">closer to home.</span></h1>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">Shop seasonal produce, pantry staples, and thoughtful farm goods delivered from people who grow them.</p>
+            <div className="mt-8 flex flex-wrap gap-3"><Link to="/market"><Button variant="cream" className="rounded-full px-6">Shop the harvest <ArrowRight size={16} /></Button></Link><Link to="/market" className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/10"><Search size={16} /> Browse all products</Link></div>
+            <div className="mt-10 grid max-w-md grid-cols-3 gap-3">{[{ n: "642", l: "partner farms" }, { n: "4.8/5", l: "happy customers" }, { n: "36 hrs", l: "average delivery" }].map((s) => <div key={s.l} className="rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-sm"><p className="font-display text-2xl text-yellow-200">{s.n}</p><p className="mt-1 text-[11px] text-white/65">{s.l}</p></div>)}</div>
           </motion.div>
-          <div className="grid grid-cols-3 gap-3 md:col-span-5">
-            {[
-              { n: "642", l: t("hero.statFarms") },
-              { n: "2,118", l: t("hero.statPassports") },
-              { n: "36 hrs", l: t("hero.statHours") },
-            ].map((s) => (
-              <div
-                key={s.l}
-                className="rounded-2xl border border-white/15 bg-canvas/10 p-4 text-center backdrop-blur-sm"
-              >
-                <p className="font-display text-2xl text-accent md:text-3xl">{s.n}</p>
-                <p className="mt-1 text-[11px] leading-snug text-accent/80">{s.l}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
-
       <section className="container-app py-14">
-        <SectionHead title={t("categories.title")} />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {categories.map((c) => (
-            <Link
-              key={c.id}
-              to={`/market?cat=${c.id}`}
-              className="group relative overflow-hidden rounded-2xl"
-            >
-              <img
-                src={c.image}
-                alt=""
-                className="h-36 w-full object-cover transition duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/75 to-transparent" />
-              <p className="absolute bottom-3 left-3 font-display text-lg text-canvas">
-                {t(`categories.${c.id}`)}
-              </p>
-            </Link>
-          ))}
-        </div>
+        <div className="mb-6 flex items-end justify-between"><SectionHead kicker="Shop by" title="What are you looking for?" /><Link to="/market" className="hidden items-center gap-1 text-sm font-medium text-primary sm:flex">View all <ChevronRight size={16} /></Link></div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">{categories.map((c) => <Link key={c.id} to={`/market?cat=${c.id}`} className="group relative overflow-hidden rounded-2xl"><img src={c.image} alt={c.id} className="h-36 w-full object-cover transition duration-500 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" /><p className="absolute bottom-3 left-3 font-display text-lg text-white">{c.id}</p></Link>)}</div>
       </section>
-
-      <section className="container-app pb-8">
-        <SectionHead
-          kicker={t("market.title")}
-          title={t("market.title")}
-          action={
-            <Link to="/market" className="text-sm font-medium text-primary">
-              {t("common.viewAll")} →
-            </Link>
-          }
-        />
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-5 px-4 py-10 md:grid-cols-3 md:px-6">
-        {[
-          {
-            icon: QrCode,
-            title: t("nav.passport"),
-            body: t("product.trust"),
-            to: "/passport",
-          },
-          {
-            icon: Sun,
-            title: t("nav.ai"),
-            body: t("ai.subtitle"),
-            to: "/ai",
-          },
-          {
-            icon: Leaf,
-            title: t("nav.sustainability"),
-            body: t("sustain.subtitle"),
-            to: "/sustainability",
-          },
-        ].map((f) => (
-          <Link key={f.to} to={f.to}>
-            <Card className="h-full p-6 transition hover:-translate-y-0.5">
-              <f.icon className="text-secondary" />
-              <h3 className="mt-4 font-display text-2xl">{f.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-soft">{f.body}</p>
-            </Card>
-          </Link>
-        ))}
-      </section>
-
-      <section className="bg-nature text-accent">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-14 md:grid-cols-2 md:px-6">
-          <img
-            src="/images/harvest.jpg"
-            alt=""
-            className="h-72 w-full rounded-[1.5rem] object-cover shadow-[0_20px_40px_-20px_rgb(0_0_0_/_0.4)]"
-          />
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-accent/80">
-              {t("common.verified")}
-            </p>
-            <h2 className="mt-2 font-display text-4xl">{farmers[0].farmName}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-accent/90">{farmers[0].bio}</p>
-            <p className="mt-4 flex items-center gap-2 text-sm">
-              <BadgeCheck size={16} /> {farmers[0].name} · {farmers[0].village}, {farmers[0].district}
-            </p>
-            <Link to="/farmer" className="mt-6 inline-block">
-              <Button variant="cream">{t("hero.cta2")}</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <section className="container-app pb-16"><SectionHead kicker="Picked for you" title="Popular this week" action={<Link to="/market" className="flex items-center gap-1 text-sm font-medium text-primary">View all products <ChevronRight size={16} /></Link>} /><div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{featured.map((p) => <ProductCard key={p.id} product={p} />)}</div></section>
+      <section className="store-benefits"><div className="container-app py-14"><p className="text-xs uppercase tracking-[0.2em] text-yellow-300">Why shop Direct Farm</p><h2 className="mt-2 max-w-xl font-display text-4xl text-white">Good food, good people, no detours.</h2><div className="mt-8 grid gap-4 sm:grid-cols-3">{[{ icon: Truck, title: "Fast, careful delivery", body: "From our farms to your door, in peak condition." }, { icon: ShieldCheck, title: "Quality you can trust", body: "Every item is selected and packed with care." }, { icon: BadgeCheck, title: "Fair for farmers", body: "Your order helps independent growers thrive." }].map(({ icon: Icon, title, body }) => <div key={title} className="rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-sm"><Icon size={22} className="text-yellow-300" /><h3 className="mt-4 font-display text-xl text-white">{title}</h3><p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p></div>)}</div></div></section>
     </div>
   );
 }

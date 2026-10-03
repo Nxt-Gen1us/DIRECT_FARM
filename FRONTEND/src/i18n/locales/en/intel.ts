@@ -6,6 +6,7 @@ const enIntel = {
     hub: "Desk",
     weather: "Weather",
     rain: "Rain",
+    rainChanceValue: "{{percent}}% rain",
     rainTab: "Rain alerts",
     calendar: "Crop calendar",
     reminders: "Reminders",

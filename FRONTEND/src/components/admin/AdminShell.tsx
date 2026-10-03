@@ -2,38 +2,34 @@ import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   AlertTriangle,
-  BarChart3,
+  LayoutDashboard,
   ClipboardList,
   CreditCard,
   FileSpreadsheet,
   Landmark,
-  Leaf,
   Package,
   ShieldCheck,
-  ShoppingBasket,
-  Sparkles,
+  UsersRound,
   Users,
 } from "lucide-react";
 
 const links = [
-  { to: "/admin", end: true, icon: BarChart3, label: "desk.overview" },
+  { to: "/admin", end: true, icon: LayoutDashboard, label: "desk.overview" },
   { to: "/admin/users", end: false, icon: Users, label: "desk.users" },
   { to: "/admin/farmers", end: false, icon: Landmark, label: "desk.farmers" },
-  { to: "/admin/customers", end: false, icon: ShoppingBasket, label: "desk.customers" },
+  { to: "/admin/customers", end: false, icon: UsersRound, label: "desk.customers" },
   { to: "/admin/products", end: false, icon: Package, label: "desk.products" },
   { to: "/admin/orders", end: false, icon: ClipboardList, label: "desk.orders" },
   { to: "/admin/payments", end: false, icon: CreditCard, label: "desk.payments" },
   { to: "/admin/verify", end: false, icon: ShieldCheck, label: "desk.verify" },
   { to: "/admin/complaints", end: false, icon: AlertTriangle, label: "desk.complaints" },
   { to: "/admin/reports", end: false, icon: FileSpreadsheet, label: "desk.reports" },
-  { to: "/admin/ai", end: false, icon: Sparkles, label: "desk.ai" },
-  { to: "/admin/sustain", end: false, icon: Leaf, label: "desk.earth" },
 ];
 
 export function AdminShell() {
   const { t } = useTranslation();
   return (
-    <div>
+    <div className="workspace-redesign admin-redesign">
       <section className="border-b border-line bg-canvas">
         <div className="container-app py-8">
           <p className="text-xs uppercase tracking-[0.2em] text-secondary">{t("desk.kicker")}</p>

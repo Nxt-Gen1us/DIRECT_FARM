@@ -12,7 +12,13 @@ export const createProductSchema = Joi.object({
   packaging: Joi.string().optional(),
   harvestDate: Joi.date().optional(),
   freshnessScore: Joi.number().min(0).max(100).optional(),
-  isOrganic: Joi.boolean().optional()
+  isOrganic: Joi.boolean().optional(),
+  variety: Joi.string().optional(),
+  unit: Joi.string().optional(),
+  minQty: Joi.number().integer().min(1).optional(),
+  tags: Joi.array().items(Joi.string()).optional(),
+  origin: Joi.string().optional(),
+  passportId: Joi.string().optional()
 });
 
 export const updateProductSchema = Joi.object({
@@ -27,5 +33,11 @@ export const updateProductSchema = Joi.object({
   packaging: Joi.string().optional(),
   harvestDate: Joi.date().optional(),
   freshnessScore: Joi.number().min(0).max(100).optional(),
-  isOrganic: Joi.boolean().optional()
+  isOrganic: Joi.boolean().optional(),
+  variety: Joi.string().optional(),
+  unit: Joi.string().optional(),
+  minQty: Joi.number().integer().min(1).optional(),
+  tags: Joi.array().items(Joi.string()).optional(),
+  origin: Joi.string().optional(),
+  passportId: Joi.string().optional()
 });

@@ -12,6 +12,13 @@ export function AddressCard({
   onSelect?: () => void;
 }) {
   const { t } = useTranslation();
+  const addressLabelKeys: Record<string, string> = {
+    Home: "flow.addressHome",
+    Kitchen: "flow.addressKitchen",
+    New: "flow.newAddress",
+    Delivery: "flow.delivery",
+  };
+  const labelKey = address.label ? addressLabelKeys[address.label] : undefined;
   return (
     <button
       type="button"
@@ -22,7 +29,7 @@ export function AddressCard({
       )}
     >
       <p className="text-[11px] uppercase tracking-wider text-muted">
-        {address.label || t("flow.address")}
+        {labelKey ? t(labelKey) : address.label || t("flow.address")}
       </p>
       <p className="mt-1 font-medium text-ink">{address.name}</p>
       <p className="text-sm text-ink-soft">

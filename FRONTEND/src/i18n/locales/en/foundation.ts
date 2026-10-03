@@ -22,11 +22,12 @@ const enFoundation = {
     tablet: "Tablet",
     desktop: "Desktop",
     viewport: "Current viewport",
+    sampleLot: "Lot NSK-15",
   },
   footer: {
     about: "About",
     aboutBody:
-      "FarmConnect AI is a farmer-first marketplace. Every listing is tied to a living crop passport so kitchens know the soil, the seed and the hands that grew it.",
+      "DIRECT FARM is a farmer-first marketplace. Every listing is tied to a living crop passport so kitchens know the soil, the seed and the hands that grew it.",
     offices: "Offices",
     office1: "Gift City, Gandhinagar",
     office2: "Anand Agri Hub",

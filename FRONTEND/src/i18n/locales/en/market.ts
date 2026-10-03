@@ -1,5 +1,9 @@
 const enMarket = {
   market: {
+    sellHarvest: "Sell a harvest",
+    clear: "Clear",
+    digitalTitle: "Digital Marketplace",
+    digitalSubtitle: "Shop every sellable product from Sanji Mandi Online Market — fresh produce, grains, spices and farm goods from verified growers.",
     title: "Today’s mandi",
     kicker: "Lots with a living passport",
     subtitle: "Seasonal crates from verified farms — filter by freshness, distance and the hands that grew them.",

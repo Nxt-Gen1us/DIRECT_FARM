@@ -36,7 +36,7 @@ export function PassportIndexPage() {
         <img src="/images/irrigation.jpg" alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-primary-deep/70 to-primary/25" />
         <div className="container-app relative py-14 md:py-20">
-          <p className="text-xs font-medium uppercase tracking-[0.22em] text-accent">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent sm:text-xs">
             {t("nav.passport")}
           </p>
           <h1 className="mt-2 max-w-2xl font-display text-4xl text-canvas md:text-5xl">
@@ -57,11 +57,11 @@ export function PassportIndexPage() {
         </div>
       </section>
       <div className="container-app py-10 md:py-14">
-        <h2 className="font-display text-3xl">{t("passport.browse")}</h2>
+        <h2 className="font-display text-3xl text-ink">{t("passport.browse")}</h2>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {passports.map((p) => (
             <Link key={p.id} to={`/passport/${p.id}`}>
-              <Card className="overflow-hidden transition hover:-translate-y-0.5">
+              <Card className="overflow-hidden transition hover:-translate-y-0.5 hover:border-primary/40">
                 <div className="relative h-40">
                   <img src={p.image} alt="" className="h-full w-full object-cover" />
                   <span className="absolute left-3 top-3 rounded-full bg-accent/95 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink">
@@ -69,7 +69,7 @@ export function PassportIndexPage() {
                   </span>
                 </div>
                 <div className="p-4">
-                  <p className="font-display text-xl">
+                  <p className="font-display text-xl text-ink">
                     {p.crop} · {p.variety}
                   </p>
                   <p className="mt-1 font-mono text-[11px] text-muted">{p.lotCode}</p>
@@ -115,7 +115,6 @@ export function PassportDetailPage() {
     [t("passport.fertilizer"), p.fertilizer],
     [t("passport.freshness"), t(`market.freshness.${fresh}`)],
     [t("passport.distance"), km(p.distanceKm)],
-    [t("passport.carbonSaved"), `${p.carbonSavedKg} kg CO₂e`],
     [t("passport.field"), p.field],
   ];
 
@@ -162,41 +161,6 @@ export function PassportDetailPage() {
       </section>
 
       <div className="container-app py-10 md:py-14">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              label: t("passport.carbonSaved"),
-              value: `${p.carbonSavedKg} kg`,
-              hint: t("passport.carbon"),
-              tone: "nature",
-            },
-            {
-              label: t("passport.distance"),
-              value: km(p.distanceKm),
-              hint: t("passport.location"),
-              tone: "secondary",
-            },
-            {
-              label: t("passport.freshness"),
-              value: t(`market.freshness.${fresh}`),
-              hint: formatDate(p.harvestedOn),
-              tone: "primary",
-            },
-            {
-              label: t("passport.water"),
-              value: `${p.waterLitres} L`,
-              hint: t("passport.irrigation"),
-              tone: "accent",
-            },
-          ].map((s) => (
-            <div key={s.label} className="rounded-[1.25rem] border border-line/70 bg-card p-5">
-              <p className="text-[11px] uppercase tracking-wider text-muted">{s.label}</p>
-              <p className="mt-2 font-display text-3xl text-primary">{s.value}</p>
-              <p className="mt-1 text-xs text-ink-soft">{s.hint}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="mt-10 rounded-[1.4rem] border border-line/70 bg-card p-6 md:p-8">
           <JourneyTimeline passport={p} />
         </div>

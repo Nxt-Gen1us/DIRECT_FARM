@@ -58,8 +58,8 @@ export function AdminComplaintsPage() {
                 <p className="text-[11px] uppercase tracking-wider text-muted">
                   {c.id} · {t(`desk.ckind.${c.kind}`)} · {formatWhen(c.at)}
                 </p>
-                <h3 className="mt-1 font-display text-xl">{c.title}</h3>
-                <p className="mt-1 text-sm text-ink-soft">{c.body}</p>
+                <h3 className="mt-1 font-display text-xl">{t(`adminData.complaints.${c.id}.title`)}</h3>
+                <p className="mt-1 text-sm text-ink-soft">{t(`adminData.complaints.${c.id}.body`)}</p>
                 <p className="mt-2 text-xs text-muted">
                   {c.from} → {c.against}
                   {c.orderId && (

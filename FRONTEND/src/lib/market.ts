@@ -1,7 +1,6 @@
 import type { Product, ProductCategory } from "./types";
 
 export const MARKET_TODAY = "2026-04-13";
-export const PAGE_SIZE = 8;
 
 export const originDistance: Record<string, number> = {
   "Dindori, Nashik": 208,
@@ -23,20 +22,11 @@ export function daysSinceHarvest(iso: string, today = MARKET_TODAY) {
   return Math.max(0, Math.round((b.getTime() - a.getTime()) / 86_400_000));
 }
 
-export type FreshBand = "today" | "3d" | "7d" | "any";
-
 export function freshnessKey(days: number): "today" | "week" | "cured" | "aged" {
   if (days <= 1) return "today";
   if (days <= 7) return "week";
   if (days <= 45) return "cured";
   return "aged";
-}
-
-export function matchesFresh(days: number, band: FreshBand) {
-  if (band === "any") return true;
-  if (band === "today") return days <= 1;
-  if (band === "3d") return days <= 3;
-  return days <= 7;
 }
 
 export const categoryIds: ProductCategory[] = [
@@ -48,32 +38,3 @@ export const categoryIds: ProductCategory[] = [
   "pulses",
 ];
 
-export type SortKey = "popular" | "priceAsc" | "priceDesc" | "fresh" | "distance" | "name";
-
-export type MarketFilters = {
-  q: string;
-  cat: ProductCategory | "";
-  organic: boolean;
-  farmerId: string;
-  fresh: FreshBand;
-  maxKm: number;
-  minPrice: number;
-  maxPrice: number;
-  inStock: boolean;
-  sort: SortKey;
-  page: number;
-};
-
-export const defaultFilters = (): MarketFilters => ({
-  q: "",
-  cat: "",
-  organic: false,
-  farmerId: "",
-  fresh: "any",
-  maxKm: 2000,
-  minPrice: 0,
-  maxPrice: 2000,
-  inStock: false,
-  sort: "popular",
-  page: 1,
-});

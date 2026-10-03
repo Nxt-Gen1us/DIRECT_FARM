@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -9,8 +10,12 @@ import {
 import type { CartItem, Role, User } from "../../lib/types";
 import { roleHome } from "../../config/roles";
 import { products } from "../../data/products";
+import { apiConfigured } from "../../lib/api";
+import { fetchProduct } from "../../lib/api/products";
 
 type AppContextValue = {
+  theme: "light" | "dark";
+  toggleTheme: () => void;
   role: Role;
   setRole: (role: Role) => void;
   homeForRole: string;
@@ -36,6 +41,14 @@ const AppContext = createContext<AppContextValue | null>(null);
 const ROLE_KEY = "fc-role";
 const USER_KEY = "fc-user";
 const WISH_KEY = "fc-wish";
+const THEME_KEY = "fc-theme";
+
+function readTheme(): "light" | "dark" {
+  if (typeof window === "undefined") return "light";
+  const stored = window.localStorage.getItem(THEME_KEY);
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 function readRole(): Role {
   if (typeof window === "undefined") return "customer";
@@ -56,6 +69,7 @@ function readUser(): User | null {
 }
 
 export function AppProviders({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<"light" | "dark">(readTheme);
   const [role, setRoleState] = useState<Role>(readRole);
   const [user, setUser] = useState<User | null>(readUser);
   const [cart, setCart] = useState<CartItem[]>(() => {
@@ -76,6 +90,30 @@ export function AppProviders({ children }: { children: ReactNode }) {
       return [];
     }
   });
+
+  const [cartPrices, setCartPrices] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    window.localStorage.setItem(THEME_KEY, theme);
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => setTheme((current) => (current === "light" ? "dark" : "light")), []);
+
+  useEffect(() => {
+    if (apiConfigured() && cart.length > 0) {
+      cart.forEach(async (item) => {
+        if (cartPrices[item.productId] === undefined) {
+          try {
+            const p = await fetchProduct(item.productId);
+            setCartPrices((prev) => ({ ...prev, [item.productId]: p.price }));
+          } catch {
+            // Ignore individual fetch errors
+          }
+        }
+      });
+    }
+  }, [cart, cartPrices]);
 
   const setRole = useCallback((next: Role) => {
     setRoleState(next);
@@ -162,12 +200,17 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const cartTotal = cart.reduce((s, i) => {
+    if (apiConfigured()) {
+      return s + ((cartPrices[i.productId] ?? 0) * i.qty);
+    }
     const p = products.find((x) => x.id === i.productId);
     return s + (p ? p.price * i.qty : 0);
   }, 0);
 
   const value = useMemo(
     () => ({
+      theme,
+      toggleTheme,
       role,
       setRole,
       homeForRole: roleHome[role],
@@ -188,6 +231,8 @@ export function AppProviders({ children }: { children: ReactNode }) {
       wished,
     }),
     [
+      theme,
+      toggleTheme,
       role,
       setRole,
       user,
@@ -206,6 +251,14 @@ export function AppProviders({ children }: { children: ReactNode }) {
       wished,
     ],
   );
+
+  useEffect(() => {
+    const handleExpired = () => {
+      logout();
+    };
+    window.addEventListener("fc:session-expired", handleExpired);
+    return () => window.removeEventListener("fc:session-expired", handleExpired);
+  }, [logout]);
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

@@ -1,18 +1,17 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Plus, Search } from "lucide-react";
+import { PencilLine, Plus, Search } from "lucide-react";
 import { useInventory } from "../../app/providers/InventoryProvider";
-import { ManageProductCard } from "../../components/farmer/ManageProductCard";
-import { DeleteConfirm } from "../../components/farmer/DeleteConfirm";
 import { Button } from "../../components/ui";
-import type { ManagedProduct } from "../../lib/inventory";
+import { Card } from "../../components/ui/Card";
+import { Badge } from "../../components/ui/Badge";
+import { formatUnit, inr } from "../../lib/format";
 
 export function ProductListPage() {
   const { t } = useTranslation();
-  const { listings, deleteListing, toggleActive } = useInventory();
+  const { listings } = useInventory();
   const [q, setQ] = useState("");
-  const [pending, setPending] = useState<ManagedProduct | null>(null);
 
   const list = useMemo(() => {
     const key = q.trim().toLowerCase();
@@ -23,63 +22,76 @@ export function ProductListPage() {
   }, [listings, q]);
 
   return (
-    <div>
-      <section className="border-b border-line bg-canvas">
-        <div className="container-app flex flex-wrap items-end justify-between gap-4 py-8 md:py-10">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-secondary">
-              {t("nav.farmer")}
-            </p>
-            <h1 className="mt-1 font-display text-4xl text-ink">{t("manage.title")}</h1>
-            <p className="mt-2 max-w-xl text-sm text-ink-soft">{t("manage.subtitle")}</p>
-          </div>
-          <Link to="/farmer/products/new">
-            <Button>
-              <Plus size={16} /> {t("manage.add")}
-            </Button>
-          </Link>
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">DIRECT FARM</p>
+          <h1 className="mt-1 text-2xl sm:text-3xl font-display text-ink">{t("farmerProducts.title")}</h1>
         </div>
-      </section>
 
-      <div className="container-app py-8">
-        <div className="mb-6 flex items-center rounded-full border border-line bg-canvas px-4 py-2">
-          <Search size={16} className="text-muted" />
+        <Link to="/farmer/products/new">
+          <Button size="lg">
+            <Plus size={18} />
+            {t("farmerHome.quickAddProduct")}
+          </Button>
+        </Link>
+      </div>
+
+      <Card className="p-4 sm:p-6">
+        <div className="mb-6 flex items-center rounded-2xl border border-line bg-canvas px-4 py-3">
+          <Search size={18} className="text-muted" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder={t("manage.search")}
-            className="ml-2 w-full bg-transparent text-sm outline-none"
+            placeholder={t("farmerProducts.searchPlaceholder")}
+            className="ml-3 w-full bg-transparent text-sm text-ink outline-none placeholder:text-muted"
           />
         </div>
 
         {list.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-line bg-canvas p-10 text-center text-ink-soft">
+          <div className="rounded-2xl border border-dashed border-line bg-canvas p-10 text-center text-ink-soft">
             {t("manage.empty")}
-          </p>
+          </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {list.map((p) => (
-              <ManageProductCard
-                key={p.id}
-                product={p}
-                onToggle={() => toggleActive(p.id)}
-                onDelete={() => setPending(p)}
-              />
+              <Card key={p.id} className="overflow-hidden p-0">
+                <img src={p.image} alt={p.name} className="h-44 w-full object-cover" />
+                <div className="space-y-4 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-display text-xl text-ink">{p.name}</p>
+                      {p.variety && <p className="text-xs text-muted">{p.variety}</p>}
+                    </div>
+                    <Badge tone={p.active ? "nature" : "muted"}>
+                      {p.active ? t("farmerProducts.statusAvailable") : t("farmerProducts.status")}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="rounded-xl bg-canvas p-3">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{t("farmerProducts.price")}</p>
+                      <p className="mt-1 font-medium text-primary">{inr(p.price)}</p>
+                    </div>
+                    <div className="rounded-xl bg-canvas p-3">
+                      <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{t("farmerProducts.available")}</p>
+                      <p className="mt-1 font-medium text-ink">{p.stock} {formatUnit(p.unit)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-3 pt-1">
+                    <Link to={`/farmer/products/${p.id}/edit`} className="inline-flex items-center gap-2 rounded-full bg-primary-soft px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10">
+                      <PencilLine size={14} />
+                      {t("farmerProducts.edit")}
+                    </Link>
+                    <span className="text-xs text-muted">{p.active ? "Online" : "Offline"}</span>
+                  </div>
+                </div>
+              </Card>
             ))}
           </div>
         )}
-      </div>
-
-      {pending && (
-        <DeleteConfirm
-          name={pending.name}
-          onCancel={() => setPending(null)}
-          onConfirm={() => {
-            deleteListing(pending.id);
-            setPending(null);
-          }}
-        />
-      )}
+      </Card>
     </div>
   );
 }

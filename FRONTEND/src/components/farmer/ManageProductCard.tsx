@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Pencil, QrCode, Trash2 } from "lucide-react";
 import type { ManagedProduct } from "../../lib/inventory";
 import { freshnessOf } from "../../lib/inventory";
-import { inr } from "../../lib/format";
-import { formatDate } from "../../lib/format";
+import { formatDate, formatUnit, inr } from "../../lib/format";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 
@@ -40,7 +39,7 @@ export function ManageProductCard({
           <div>
             <p className="font-display text-2xl text-primary">{inr(product.price)}</p>
             <p className="text-[11px] text-muted">
-              {product.stock} {product.unit} · {t("manage.harvest")} {formatDate(product.harvestedOn)}
+              {product.stock} {formatUnit(product.unit)} · {t("manage.harvest")} {formatDate(product.harvestedOn)}
             </p>
           </div>
           <p className="font-mono text-[10px] text-ink-soft">

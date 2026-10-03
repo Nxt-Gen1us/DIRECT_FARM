@@ -8,11 +8,16 @@ import productsRouter from './products.routes.js';
 import ordersRouter from './orders.routes.js';
 import paymentsRouter from './payments.routes.js';
 import walletRouter from './wallet.routes.js';
+import walletTopupRouter from './walletTopup.routes.js';
 import notificationsRouter from './notifications.routes.js';
 import messagesRouter from './messages.routes.js';
 import deliveryRouter from './delivery.routes.js';
+import webhooksRouter from './webhooks.routes.js';
 import sessionsRouter from './sessions.routes.js';
 import settingsRouter from './settings.routes.js';
+import reviewsRouter from './reviews.routes.js';
+import adminRouter from './admin.routes.js';
+import harvestTimelineRouter from './harvestTimeline.routes.js';
 
 const router = express.Router();
 
@@ -25,10 +30,15 @@ router.use('/products', productsRouter);
 router.use('/orders', ordersRouter);
 router.use('/payments', paymentsRouter);
 router.use('/wallet', walletRouter);
+router.use('/wallet/topup', walletTopupRouter);
 router.use('/notifications', notificationsRouter);
 router.use('/messages', messagesRouter);
 router.use('/delivery', deliveryRouter);
+router.use('/webhooks', webhooksRouter);
 router.use('/sessions', sessionsRouter);
 router.use('/settings', settingsRouter);
+router.use('/reviews', reviewsRouter);
+router.use('/admin', adminRouter);
+router.use('/harvest-timeline', harvestTimelineRouter);
 
 export default router;

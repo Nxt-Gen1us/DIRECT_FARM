@@ -16,6 +16,10 @@ class ProductRepository {
       .sort(options.sort || { createdAt: -1 });
   }
 
+  async listCategories() {
+    return Product.distinct('category', { category: { $nin: [null, ''] } });
+  }
+
   async updateById(id, updateData) {
     return Product.findByIdAndUpdate(id, updateData, { new: true });
   }

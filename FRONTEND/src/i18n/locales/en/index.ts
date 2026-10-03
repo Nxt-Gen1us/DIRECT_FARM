@@ -10,16 +10,13 @@ import passport from "./passport";
 import farmer from "./farmer";
 import profile from "./profile";
 import manage from "./manage";
-import ai from "./ai";
 import flow from "./flow";
 import radio from "./radio";
-import atlas from "./atlas";
 import intel from "./intel";
 import shop from "./shop";
-import earth from "./earth";
 import desk from "./desk";
-import plus from "./plus";
 import account from "./account";
+import routes from "./routes";
 
 const en = {
   ...common,
@@ -34,15 +31,12 @@ const en = {
   ...farmer,
   ...profile,
   ...manage,
-  ...ai,
   ...flow,
   ...radio,
-  ...atlas,
   ...intel,
   ...shop,
-  ...earth,
   ...desk,
-  ...plus,
   ...account,
+  ...routes,
 };
 export default en;

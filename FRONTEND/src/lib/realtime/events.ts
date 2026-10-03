@@ -20,7 +20,7 @@ export const RADIO_EVENTS = {
   typingStop: "typing:stop",
 } as const;
 
-export type IncomingMessage = ChatMessage & { threadId: string };
+export type IncomingMessage = ChatMessage & { threadId: string; senderId?: string };
 
 export type MessageAck = {
   localId: string;
@@ -54,6 +54,7 @@ export type RealtimeHandlers = {
 export type OutgoingNote = {
   localId: string;
   threadId: string;
+  receiverId: string;
   kind: ChatMessage["kind"];
   text: string;
   attachment?: ChatMessage["attachment"];

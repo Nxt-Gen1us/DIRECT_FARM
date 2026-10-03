@@ -11,7 +11,7 @@ export const createOrder = async (req, res, next) => {
 
 export const getOrder = async (req, res, next) => {
   try {
-    const order = await orderService.getOrder(req.params.orderId);
+    const order = await orderService.getOrder(req.params.orderId, req.user);
     res.status(200).json({ status: 'success', data: order });
   } catch (error) {
     next(error);
@@ -38,7 +38,7 @@ export const listFarmerOrders = async (req, res, next) => {
 
 export const updateOrder = async (req, res, next) => {
   try {
-    const order = await orderService.updateOrder(req.params.orderId, req.body);
+    const order = await orderService.updateOrder(req.params.orderId, req.body, req.user);
     res.status(200).json({ status: 'success', data: order });
   } catch (error) {
     next(error);

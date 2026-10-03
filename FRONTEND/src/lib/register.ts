@@ -18,6 +18,9 @@ import {
 } from "./validation";
 import { buildSessionUser } from "./auth";
 import { findRegistered, saveRegistered } from "./accounts";
+import { apiConfigured } from "./api";
+import { registerApi } from "./api/auth";
+import { createFarmerProfileApi } from "./api/farmers";
 
 export type RegisterPath = "customer" | "farmer";
 
@@ -143,6 +146,53 @@ export async function submitRegistration(draft: RegisterDraft): Promise<
     experience: draft.experience || undefined,
     organic: draft.organic,
   });
+
+  if (apiConfigured()) {
+    try {
+      const nameParts = draft.name.trim().split(" ");
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ");
+      
+      const res = await registerApi({
+        firstName,
+        lastName,
+        email: draft.email.trim().toLowerCase(),
+        password: draft.password,
+        role,
+      });
+
+      if (role === "farmer") {
+        try {
+          await createFarmerProfileApi({
+            farmName: draft.farmName.trim() || `${firstName}'s Farm`,
+            description: draft.crops.join(", "),
+            experienceYears: Number(draft.experience) || 0,
+            organicCertification: draft.organic === "yes",
+            location: {
+              address: draft.location.trim(),
+              state: draft.state,
+            }
+          });
+        } catch (e) {
+          // Log and ignore profile creation errors so registration succeeds
+          console.warn("Farmer profile creation failed", e);
+        }
+      }
+
+      // Optionally update user properties beyond auth schema
+      const user = res.user;
+      user.phone = draft.phone.trim();
+      user.state = draft.state;
+      user.district = draft.location.trim();
+      if (draft.path === "farmer") user.village = draft.farmName.trim();
+      return { ok: true, user };
+    } catch (err: any) {
+      if (err.message && err.message.toLowerCase().includes("email")) {
+        return { ok: false, errors: { email: "emailTaken" } };
+      }
+      return { ok: false, errors: { _form: err.message || "Registration failed" } as any };
+    }
+  }
 
   const user = buildSessionUser(draft.email, role, draft.name);
   user.phone = draft.phone.trim();

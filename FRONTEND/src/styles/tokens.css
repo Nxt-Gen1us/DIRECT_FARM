@@ -4,39 +4,40 @@
   --font-display: "Playfair Display", "Noto Serif Devanagari", "Noto Serif Gujarati", Georgia, "Times New Roman", serif;
   --font-body: "Poppins", "Noto Sans Devanagari", "Noto Sans Gujarati", "Segoe UI", system-ui, sans-serif;
 
-  --color-primary: #8b2626;
-  --color-primary-dark: #6a1b1b;
-  --color-primary-deep: #4e1212;
-  --color-primary-soft: #f6e8e4;
-  --color-primary-mid: #b33a32;
+  --color-primary: #15803d;
+  --color-primary-dark: #166534;
+  --color-primary-deep: #052e16;
+  --color-primary-soft: #dcfce7;
+  --color-primary-mid: #22c55e;
 
-  --color-secondary: #ef6905;
-  --color-secondary-dark: #c45304;
-  --color-secondary-soft: #fff0e3;
+  --color-secondary: #a16207;
+  --color-secondary-dark: #854d0e;
+  --color-secondary-soft: #fef3c7;
 
-  --color-accent: #f1e5a1;
-  --color-accent-dark: #d9c56a;
-  --color-accent-soft: #faf6dc;
+  --color-accent: #facc15;
+  --color-accent-dark: #eab308;
+  --color-accent-soft: #fef9c3;
 
   --color-nature: #486c2f;
   --color-nature-dark: #355022;
   --color-nature-soft: #eef4e6;
   --color-nature-mid: #6a8f48;
 
-  --color-cream: #fbf6ea;
-  --color-cream-deep: #f3ead0;
-  --color-canvas: #fffdf7;
-  --color-ink: #241610;
-  --color-ink-soft: #5c4638;
-  --color-muted: #8a7363;
-  --color-line: #e6d8b4;
-  --color-card: #fffaf0;
+  --color-cream: #f5f8f2;
+  --color-cream-deep: #e8f1e5;
+  --color-canvas: #ffffff;
+  --color-canvas-soft: #f0f6ef;
+  --color-ink: #14231a;
+  --color-ink-soft: #405449;
+  --color-muted: #718179;
+  --color-line: #dce8df;
+  --color-card: #ffffff;
   --color-danger: #b42318;
   --color-info: #2f5d8c;
 
-  --shadow-soft: 0 10px 30px -12px rgb(36 22 16 / 0.18);
-  --shadow-lift: 0 18px 40px -16px rgb(139 38 38 / 0.28);
-  --radius-card: 1.25rem;
+  --shadow-soft: 0 10px 30px -12px rgb(20 35 26 / 0.16);
+  --shadow-lift: 0 18px 40px -16px rgb(21 128 61 / 0.24);
+  --radius-card: 0.5rem;
 
   --breakpoint-xs: 360px;
   --breakpoint-sm: 640px;

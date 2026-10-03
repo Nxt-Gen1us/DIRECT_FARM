@@ -2,10 +2,10 @@ export type Language = "en" | "hi" | "gu";
 export type Role = "customer" | "farmer" | "admin";
 export type OrderStatus = "pending" | "confirmed" | "packed" | "shipped" | "delivered" | "cancelled";
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
-export type PaymentMethod = "upi" | "card" | "wallet" | "cod" | "netbanking";
+export type PaymentMethod = "upi" | "card" | "wallet" | "cod" | "netbanking" | "razorpay";
 export type TrackStageId = "placed" | "packed" | "shipped" | "out" | "delivered";
 export type ReturnStatus = "none" | "requested" | "approved" | "received";
-export type PayChannel = "razorpay" | "cod";
+export type PayChannel = "razorpay" | "cod" | "wallet";
 
 export interface Address {
   id: string;
@@ -57,7 +57,6 @@ export interface FarmerProfile {
   bio: string;
   certifications: string[];
   languages: Language[];
-  sustainabilityScore: number;
 }
 
 export interface Product {
@@ -84,13 +83,7 @@ export interface Product {
   distanceKm: number;
 }
 
-export type ProductCategory =
-  | "vegetables"
-  | "fruits"
-  | "grains"
-  | "spices"
-  | "dairy"
-  | "pulses";
+export type ProductCategory = string;
 
 export interface CartItem {
   productId: string;
@@ -173,7 +166,7 @@ export interface Transaction {
   note: string;
 }
 
-export type MessageKind = "text" | "image" | "file" | "voice";
+export type MessageKind = "text" | "image" | "file" | "voice" | "system";
 export type MessageStatus = "queued" | "sent" | "delivered" | "read" | "failed";
 export type PresenceState = "online" | "away" | "offline" | "unknown";
 export type NoticeKind = "chat" | "crate" | "weather" | "passport" | "system";
@@ -190,6 +183,8 @@ export interface ChatAttachment {
 export interface ChatMessage {
   id: string;
   threadId?: string;
+  senderId?: string;
+  senderName?: string;
   from: "me" | "them";
   kind?: MessageKind;
   text: string;
@@ -203,6 +198,7 @@ export interface ChatMessage {
 export interface ChatThread {
   id: string;
   farmerId: string;
+  recipientUserId?: string;
   farmerName: string;
   farmName?: string;
   village?: string;
@@ -338,31 +334,10 @@ export interface CropPassport {
   certifications: string[];
   moisture: number;
   residueStatus: string;
-  carbonKg: number;
-  carbonSavedKg: number;
-  waterLitres: number;
   distanceKm: number;
   grade: string;
   image: string;
   qr: string;
   currentStage: JourneyStageId;
   journey: JourneyStage[];
-}
-
-export interface AiInsight {
-  id: string;
-  type: "pest" | "soil" | "yield" | "irrigation" | "market";
-  title: string;
-  summary: string;
-  confidence: number;
-  action: string;
-  crop: string;
-  severity: "low" | "medium" | "high";
-}
-
-export interface SustainabilityMetric {
-  label: string;
-  value: string;
-  delta: string;
-  positive: boolean;
 }

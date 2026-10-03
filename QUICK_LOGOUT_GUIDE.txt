@@ -1,0 +1,61 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║                  🚪 HOW TO LOGOUT - 2 WAYS                       ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+✅ LOGOUT IS NOW AVAILABLE IN 2 PLACES!
+
+═══════════════════════════════════════════════════════════════════
+
+🔴 METHOD 1: ACCOUNT PAGE (NEW - JUST ADDED!)
+
+1. Click your profile picture/name (top right)
+2. You'll see a RED "Logout" button with → icon
+3. Click it to logout
+
+Location: http://localhost:5173/account
+
+Visual:
+┌────────────────────────────────────┐
+│ 👤 Your Name                       │
+│    email@example.com               │
+│                    [→ Logout] ← NEW│
+└────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+
+📱 METHOD 2: MOBILE MENU (ORIGINAL)
+
+1. Click ☰ menu button (top right)
+2. Scroll to bottom of menu
+3. Click "Logout"
+
+Works on: All devices (mobile, tablet, desktop)
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 QUICK TEST:
+
+1. Go to: http://localhost:5173
+2. Login: admin@directfarm.com / FarmDirect2026!
+3. Click profile picture → See Logout button
+4. Click Logout → Returns to home page
+
+═══════════════════════════════════════════════════════════════════
+
+✨ WHAT I JUST ADDED:
+
+✅ Big red "Logout" button on Account page
+✅ Clean design with hover effect
+✅ Visible when logged in
+✅ Redirects to home after logout
+✅ No TypeScript errors
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 BOTH METHODS WORK PERFECTLY!
+
+Choose whichever is more convenient for you!
+
+═══════════════════════════════════════════════════════════════════

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +13,9 @@ import {
 import { farmerById, farmers } from "../../data/farmers";
 import { profileOrFallback } from "../../data/farmerProfiles";
 import { products } from "../../data/products";
+import { fetchProducts } from "../../lib/api/products";
+import { apiConfigured } from "../../lib/api";
+import type { Product } from "../../lib/types";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { ProductCard } from "../../components/marketplace/ProductCard";
@@ -78,6 +81,21 @@ export function FarmerProfilePage() {
   const farmer = farmerById(id ?? "");
   const [activeVideo, setActiveVideo] = useState(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lots, setLots] = useState<Product[]>(
+    () => products.filter((p) => p.farmerId === (id ?? "")).slice(0, 4),
+  );
+
+  // Fetch real products from backend when API is configured
+  useEffect(() => {
+    if (!farmer?.id) return;
+    if (!apiConfigured()) {
+      setLots(products.filter((p) => p.farmerId === farmer.id).slice(0, 4));
+      return;
+    }
+    fetchProducts({ farmer: farmer.id })
+      .then((fetched) => setLots(fetched.slice(0, 4)))
+      .catch(console.error);
+  }, [farmer?.id]);
 
   if (!farmer) {
     return (
@@ -86,7 +104,6 @@ export function FarmerProfilePage() {
   }
 
   const extra = profileOrFallback(farmer.id);
-  const lots = products.filter((p) => p.farmerId === farmer.id).slice(0, 4);
   const video = extra.videos[activeVideo] ?? extra.videos[0];
   const years = extra.experienceYears || Math.max(1, new Date().getFullYear() - farmer.since);
 
@@ -129,9 +146,6 @@ export function FarmerProfilePage() {
               <Link to={`/market?farmer=${farmer.id}`}>
                 <Button variant="secondary">{t("profile.shop")}</Button>
               </Link>
-              <Link to="/map/farms">
-                <Button variant="ghost">{t("nav.map")}</Button>
-              </Link>
               {farmer.id === "f-ramesh" && (
                 <Link to="/farmer">
                   <Button variant="ghost">{t("profile.desk")}</Button>
@@ -162,9 +176,6 @@ export function FarmerProfilePage() {
           <StarRow value={farmer.rating} size={16} />
           <span className="text-sm text-ink-soft">
             {farmer.rating} · {farmer.reviews} {t("profile.reviews")}
-          </span>
-          <span className="text-xs text-muted">
-            {t("profile.since")} {farmer.since} · {t("profile.score")} {farmer.sustainabilityScore}
           </span>
         </div>
 

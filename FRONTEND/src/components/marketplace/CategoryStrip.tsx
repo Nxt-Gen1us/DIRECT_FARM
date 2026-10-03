@@ -1,14 +1,16 @@
 import { useTranslation } from "react-i18next";
-import { categories } from "../../data/products";
+import { categories as fallbackCategories } from "../../data/products";
 import type { ProductCategory } from "../../lib/types";
 import { cn } from "../../lib/cn";
 
 export function CategoryStrip({
   value,
   onChange,
+  categories = fallbackCategories,
 }: {
   value: ProductCategory | "";
   onChange: (cat: ProductCategory | "") => void;
+  categories?: { id: string; image?: string }[];
 }) {
   const { t } = useTranslation();
   return (
@@ -33,10 +35,10 @@ export function CategoryStrip({
             value === c.id && "ring-2 ring-primary ring-offset-2 ring-offset-cream",
           )}
         >
-          <img src={c.image} alt="" className="h-full w-full object-cover" />
+          <img src={c.image ?? "/images/vegetables.jpg"} alt="" className="h-full w-full object-cover" />
           <span className="absolute inset-0 bg-gradient-to-t from-ink/75 to-transparent" />
           <span className="absolute bottom-2 left-3 font-display text-sm text-canvas">
-            {t(`categories.${c.id}`)}
+            {t(`categories.${c.id}`, { defaultValue: c.id.replace(/[-_]/g, " ") })}
           </span>
         </button>
       ))}

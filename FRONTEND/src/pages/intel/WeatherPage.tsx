@@ -17,10 +17,11 @@ import { Card } from "../../components/ui/Card";
 import { weatherDays } from "../../data/weather";
 import { monthRain, rainHours, rainAlerts } from "../../data/intel";
 import { cn } from "../../lib/cn";
+import { formatChartLabel } from "../../lib/format";
 
 const tooltip = {
-  background: "#FFFAF0",
-  border: "1px solid #E6D8B4",
+  background: "#FFFFFF",
+  border: "1px solid #DCE8DF",
   borderRadius: 12,
   fontSize: 12,
 };
@@ -40,7 +41,7 @@ export function WeatherPage() {
     <IntelShell kicker={t("intel.kicker")} title={t("intel.weatherTitle")} lede={t("intel.weatherLede")}>
       <div className="grid gap-4 lg:grid-cols-4">
         <Card className="p-5 lg:col-span-2">
-          <p className="text-xs uppercase tracking-wider text-secondary">{t("intel.nowAnand")}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-secondary">{t("intel.nowAnand")}</p>
           <div className="mt-2 flex items-end gap-4">
             <p className="font-display text-6xl text-ink">{now.high}°</p>
             <div className="pb-2 text-sm text-ink-soft">
@@ -54,15 +55,15 @@ export function WeatherPage() {
           </div>
           <div className="mt-4 grid grid-cols-3 gap-3 text-center">
             <div className="rounded-2xl bg-cream p-3">
-              <p className="text-[10px] uppercase tracking-wider text-muted">{t("intel.rain")}</p>
+              <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{t("intel.rain")}</p>
               <p className="font-display text-2xl">{now.rain}%</p>
             </div>
             <div className="rounded-2xl bg-cream p-3">
-              <p className="text-[10px] uppercase tracking-wider text-muted">{t("intel.humidity")}</p>
+              <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{t("intel.humidity")}</p>
               <p className="font-display text-2xl">{now.humidity}%</p>
             </div>
             <div className="rounded-2xl bg-cream p-3">
-              <p className="text-[10px] uppercase tracking-wider text-muted">{t("intel.wind")}</p>
+              <p className="text-[10px] uppercase tracking-[0.14em] text-muted">{t("intel.wind")}</p>
               <p className="font-display text-2xl">{now.wind}</p>
             </div>
           </div>
@@ -79,11 +80,11 @@ export function WeatherPage() {
                     <stop offset="100%" stopColor="#2f5d8c" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid stroke="#E6D8B4" strokeDasharray="3 3" />
+                <CartesianGrid stroke="#DCE8DF" strokeDasharray="3 3" />
                 <XAxis dataKey="hour" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip contentStyle={tooltip} />
-                <Area type="monotone" dataKey="temp" stroke="#ef6905" strokeWidth={2} fill="none" name="°C" />
+                <Area type="monotone" dataKey="temp" stroke="#A16207" strokeWidth={2} fill="none" name="°C" />
                 <Area type="monotone" dataKey="rain" stroke="#2f5d8c" strokeWidth={2} fill="url(#rainFill)" name="mm" />
               </AreaChart>
             </ResponsiveContainer>
@@ -97,11 +98,11 @@ export function WeatherPage() {
           const Icon = condIcon[d.condition];
           return (
             <Card key={d.date} className={cn("p-4", i === 0 && "ring-2 ring-primary/30")}>
-              <p className="text-xs uppercase tracking-wider text-muted">{d.label}</p>
+              <p className="text-xs uppercase tracking-wider text-muted">{formatChartLabel(d.label)}</p>
               <Icon size={18} className="mt-2 text-secondary" />
               <p className="mt-2 font-display text-2xl">{d.high}°</p>
               <p className="text-xs text-muted">{d.low}°</p>
-              <p className="mt-2 text-xs text-primary">{d.rain}% rain</p>
+              <p className="mt-2 text-xs text-primary">{t("intel.rainChanceValue", { percent: d.rain })}</p>
             </Card>
           );
         })}
@@ -113,12 +114,12 @@ export function WeatherPage() {
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthRain}>
-                <CartesianGrid stroke="#E6D8B4" strokeDasharray="3 3" />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                <CartesianGrid stroke="#DCE8DF" strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 11 }} tickFormatter={formatChartLabel} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip contentStyle={tooltip} />
-                <Bar dataKey="mm" fill="#8b2626" radius={[6, 6, 0, 0]} name="mm" />
-                <Bar dataKey="normal" fill="#c9a227" radius={[6, 6, 0, 0]} name="normal" />
+                <Bar dataKey="mm" fill="#15803d" radius={[6, 6, 0, 0]} name="mm" />
+                <Bar dataKey="normal" fill="#eab308" radius={[6, 6, 0, 0]} name="normal" />
               </BarChart>
             </ResponsiveContainer>
           </div>

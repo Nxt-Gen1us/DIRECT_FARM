@@ -5,7 +5,7 @@ import { useShop } from "../../app/providers/ShopProvider";
 import { vegBoxes, boxById } from "../../data/boxes";
 import { productById } from "../../data/products";
 import { farmerById } from "../../data/farmers";
-import { inr, formatDate } from "../../lib/format";
+import { formatDate, formatUnit, inr } from "../../lib/format";
 import type { BoxCadence } from "../../lib/types";
 import { Badge, Button } from "../../components/ui";
 import { Card } from "../../components/ui/Card";
@@ -17,15 +17,15 @@ export function BoxPage() {
   const [note, setNote] = useState("");
 
   return (
-    <div className="container-app py-10">
-      <p className="text-xs uppercase tracking-[0.2em] text-secondary">{t("shop.kicker")}</p>
-      <h1 className="mt-1 font-display text-4xl">{t("shop.boxTitle")}</h1>
+    <div className="container-app py-8 sm:py-10">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">{t("shop.kicker")}</p>
+      <h1 className="mt-1 font-display text-3xl text-ink sm:text-4xl">{t("shop.boxTitle")}</h1>
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t("shop.boxLede")}</p>
       {note && <p className="mt-4 rounded-2xl bg-nature-soft px-3 py-2 text-sm text-nature-dark">{note}</p>}
 
       {subscriptions.length > 0 && (
         <section className="mt-8">
-          <h2 className="mb-3 font-display text-2xl">{t("shop.yourBoxes")}</h2>
+          <h2 className="mb-3 font-display text-2xl text-ink">{t("shop.yourBoxes")}</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {subscriptions.map((s) => {
               const box = boxById(s.boxId);
@@ -34,7 +34,7 @@ export function BoxPage() {
                 <Card key={s.id} className="p-5">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-display text-2xl">{box.name}</p>
+                      <p className="font-display text-2xl text-ink">{box.name}</p>
                       <p className="text-xs text-muted">
                         {t(`shop.cadence.${s.cadence}`)} · {t("shop.next")} {formatDate(s.nextAt)}
                       </p>
@@ -72,8 +72,8 @@ export function BoxPage() {
             <Card key={box.id} className="flex flex-col overflow-hidden">
               <img src={box.image} alt="" className="h-40 w-full object-cover" />
               <div className="flex flex-1 flex-col p-5">
-                <p className="text-[11px] uppercase tracking-wider text-muted">{t(`shop.size.${box.size}`)}</p>
-                <h2 className="font-display text-2xl">{box.name}</h2>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-secondary">{t(`shop.size.${box.size}`)}</p>
+                <h2 className="mt-1 font-display text-2xl text-ink">{box.name}</h2>
                 <p className="mt-1 text-sm text-ink-soft">{box.blurb}</p>
                 <p className="mt-3 font-display text-3xl text-primary">{inr(box.price)}</p>
                 <ul className="mt-3 space-y-1 text-sm">
@@ -84,7 +84,7 @@ export function BoxPage() {
                       <li key={line.productId} className="flex justify-between text-ink-soft">
                         <span>{p.name}</span>
                         <span>
-                          {line.qty} {p.unit}
+                          {line.qty} {formatUnit(p.unit)}
                         </span>
                       </li>
                     );
@@ -100,7 +100,7 @@ export function BoxPage() {
                       type="button"
                       onClick={() => setCadence((s) => ({ ...s, [box.id]: c }))}
                       className={`rounded-full px-3 py-1 text-xs ${
-                        cad === c ? "bg-primary text-accent" : "border border-line"
+                        cad === c ? "bg-primary text-accent" : "border border-line bg-canvas text-ink-soft"
                       }`}
                     >
                       {t(`shop.cadence.${c}`)}
@@ -122,7 +122,7 @@ export function BoxPage() {
         })}
       </div>
       <p className="mt-6 text-xs text-muted">{t("shop.boxNote")}</p>
-      <Link to="/market" className="mt-3 inline-block text-sm text-primary">
+      <Link to="/market" className="mt-3 inline-block text-sm font-medium text-primary">
         {t("flow.shop")} →
       </Link>
     </div>

@@ -10,7 +10,6 @@ const tabs = [
   { to: "/calendar", end: true, label: "intel.calendar" },
   { to: "/reminders", end: true, label: "intel.reminders" },
   { to: "/schemes", end: true, label: "intel.schemes" },
-  { to: "/sustainability", end: true, label: "nav.sustainability" },
 ];
 
 export function IntelShell({

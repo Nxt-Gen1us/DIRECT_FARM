@@ -1,54 +1,56 @@
 import { useTranslation } from "react-i18next";
-import { BadgeCheck, Droplets, QrCode, ShieldCheck } from "lucide-react";
-import { Reveal, Stagger, StaggerItem } from "../../../components/motion/Reveal";
-import { trustMarks } from "../../../data/landing";
+import { BadgeCheck, FileText, PackageCheck, ShieldCheck, Wallet } from "lucide-react";
 
-const stats = [
-  { icon: ShieldCheck, key: "landing.trust.residue", value: "100%" },
-  { icon: BadgeCheck, key: "landing.trust.payouts", value: "Direct" },
-  { icon: QrCode, key: "landing.trust.qr", value: "1 : 1" },
-  { icon: Droplets, key: "landing.trust.labs", value: "SGS · APEDA" },
-];
-
-export function TrustBar() {
+export function TrustAndImpact() {
   const { t } = useTranslation();
 
+  const trustItems = [
+    { label: t("landing.trust.t1"), icon: BadgeCheck },
+    { label: t("landing.trust.t2"), icon: FileText },
+    { label: t("landing.trust.t3"), icon: Wallet },
+    { label: t("landing.trust.t4"), icon: ShieldCheck },
+    { label: t("landing.trust.t5"), icon: PackageCheck },
+  ];
+
+  const impacts = [
+    { label: t("landing.impact.i1"), desc: t("landing.impact.i1desc") },
+    { label: t("landing.impact.i2"), desc: t("landing.impact.i2desc") },
+    { label: t("landing.impact.i3"), desc: t("landing.impact.i3desc") },
+  ];
+
   return (
-    <section id="trust" className="scroll-mt-24 border-y border-line bg-canvas">
-      <div className="container-app py-14 md:py-16">
-        <Reveal>
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-secondary">
-            {t("landing.trust.kicker")}
-          </p>
-          <h2 className="mt-2 max-w-2xl font-display text-3xl text-ink md:text-4xl">
+    <section className="bg-green-50 py-16 lg:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl border border-green-100 shadow-sm p-8 lg:p-12 mb-12">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-8 text-center">
             {t("landing.trust.title")}
           </h2>
-        </Reveal>
-
-        <Stagger className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map((s) => (
-            <StaggerItem key={s.key}>
-              <div className="rounded-2xl border border-line/70 bg-card p-5">
-                <s.icon className="text-secondary" size={20} />
-                <p className="mt-4 font-display text-2xl text-primary">{s.value}</p>
-                <p className="mt-1 text-sm text-ink-soft">{t(s.key)}</p>
-              </div>
-            </StaggerItem>
-          ))}
-        </Stagger>
-
-        <Reveal delay={0.1}>
-          <div className="mt-8 flex flex-wrap items-center gap-2">
-            {trustMarks.map((mark) => (
-              <span
-                key={mark}
-                className="rounded-full border border-line bg-cream px-3 py-1 text-xs font-medium text-ink-soft"
+          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {trustItems.map(({ label, icon: Icon }) => (
+              <div
+                key={label}
+                className="bg-green-50 border border-green-100 rounded-xl px-4 py-3 text-center text-green-800 font-medium text-sm flex items-center justify-center gap-2"
               >
-                {mark}
-              </span>
+                <Icon size={14} />
+                {label}
+              </div>
             ))}
           </div>
-        </Reveal>
+        </div>
+
+        <div className="text-center mb-8">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900">
+            {t("landing.impact.title")}
+          </h2>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-6">
+          {impacts.map((imp, i) => (
+            <div key={i} className="text-center bg-white rounded-2xl p-6 border border-green-100 shadow-sm">
+              <p className="font-bold text-green-900 text-xl mb-1">{imp.label}</p>
+              <p className="text-gray-500 text-sm">{imp.desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

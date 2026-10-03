@@ -1,16 +1,18 @@
 import Joi from 'joi';
 
 export const createOrderSchema = Joi.object({
-  farmer: Joi.string().required(),
+  farmer: Joi.string().optional().allow(''),
   items: Joi.array().items(Joi.object({
     product: Joi.string().required(),
     quantity: Joi.number().integer().min(1).required(),
-    price: Joi.number().required()
+    // price is accepted from client but ALWAYS overridden server-side
+    price: Joi.number().optional()
   })).min(1).required(),
-  subtotal: Joi.number().required(),
+  // subtotal/total accepted as hints; recalculated server-side for security
+  subtotal: Joi.number().optional(),
   shippingFee: Joi.number().default(0),
   tax: Joi.number().default(0),
-  total: Joi.number().required(),
+  total: Joi.number().optional(),
   deliveryAddress: Joi.object({
     label: Joi.string().optional(),
     street: Joi.string().required(),

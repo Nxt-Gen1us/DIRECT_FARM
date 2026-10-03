@@ -8,9 +8,9 @@ export const demoAccounts: Record<
   Role,
   { email: string; name: string; hint: string }
 > = {
-  customer: { email: "ananya@farmconnect.ai", name: "Ananya Mehta", hint: "Kitchen buyer" },
+  customer: { email: "ananya@directfarm.com", name: "Ananya Mehta", hint: "Kitchen buyer" },
   farmer: { email: "ramesh@khedut.farm", name: "Ramesh Patel", hint: "Ode Organic Acres" },
-  admin: { email: "priya@farmconnect.ai", name: "Priya Desai", hint: "Platform desk" },
+  admin: { email: "priya@directfarm.com", name: "Priya Desai", hint: "Platform desk" },
 };
 
 export function isValidEmail(value: string) {

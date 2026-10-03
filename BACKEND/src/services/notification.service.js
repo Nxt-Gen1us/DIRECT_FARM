@@ -9,8 +9,12 @@ class NotificationService {
     return notificationRepository.findByUser(userId, options);
   }
 
-  async markRead(notificationId) {
-    return notificationRepository.markRead(notificationId);
+  async markRead(notificationId, userId) {
+    const notification = await notificationRepository.markRead(notificationId, userId);
+    if (!notification) {
+      throw Object.assign(new Error('Notification not found'), { statusCode: 404 });
+    }
+    return notification;
   }
 
   async markAllRead(userId) {

@@ -1,138 +1,34 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { CheckCircle2, ClipboardList, FileCheck2, MessageSquareWarning, UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { categoryMix, deskKpis, gmvSeries, roleMix } from "../../data/admin";
-import { complaints } from "../../data/admin";
+import { complaints, deskKpis } from "../../data/admin";
 import { compactInr } from "../../lib/format";
 import { Badge } from "../../components/ui/Badge";
-import { Card } from "../../components/ui/Card";
-
-const tooltip = {
-  background: "#FFFAF0",
-  border: "1px solid #E6D8B4",
-  borderRadius: 12,
-  fontSize: 12,
-};
-
-const pieColors = ["#8b2626", "#486c2f", "#ef6905", "#c9a227", "#2f5d8c", "#5c4638"];
+import { apiConfigured } from "../../lib/api";
+import { fetchAdminStats, type AdminStats } from "../../lib/api/admin";
 
 export function AdminOverviewPage() {
   const { t } = useTranslation();
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  useEffect(() => { if (apiConfigured()) void fetchAdminStats().then(setStats).catch(() => setStats(null)); }, []);
+  const live = stats ?? { gmv: deskKpis.gmv, orders: deskKpis.orders, farmers: deskKpis.farmers, buyers: deskKpis.buyers, lots: deskKpis.lots };
   const kpis = [
-    { k: t("desk.gmv"), v: compactInr(deskKpis.gmv), to: "/admin/orders" },
-    { k: t("desk.orders"), v: deskKpis.orders.toLocaleString("en-IN"), to: "/admin/orders" },
-    { k: t("desk.farmers"), v: String(deskKpis.farmers), to: "/admin/farmers" },
-    { k: t("desk.buyers"), v: deskKpis.buyers.toLocaleString("en-IN"), to: "/admin/customers" },
-    { k: t("desk.lots"), v: String(deskKpis.lots), to: "/admin/products" },
-    { k: t("desk.disputes"), v: String(deskKpis.disputes), to: "/admin/complaints" },
-    { k: t("desk.aiCalls"), v: String(deskKpis.aiCalls), to: "/admin/ai" },
-    { k: t("desk.carbon"), v: `${deskKpis.carbonT} t`, to: "/admin/sustain" },
+    { k: t("desk.gmv"), v: compactInr(live.gmv), to: "/admin/orders", icon: "₹" },
+    { k: t("desk.orders"), v: live.orders.toLocaleString("gu-IN"), to: "/admin/orders", icon: <ClipboardList size={18} /> },
+    { k: t("desk.farmers"), v: String(live.farmers), to: "/admin/farmers", icon: <UsersRound size={18} /> },
+    { k: t("desk.buyers"), v: live.buyers.toLocaleString("gu-IN"), to: "/admin/customers", icon: <UsersRound size={18} /> },
+    { k: t("desk.lots"), v: String(live.lots), to: "/admin/products", icon: <CheckCircle2 size={18} /> },
   ];
-
-  return (
-    <div>
-      <h2 className="font-display text-3xl text-ink">{t("desk.overview")}</h2>
-      <p className="mt-1 text-sm text-ink-soft">{t("desk.overviewLede")}</p>
-      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {kpis.map((x) => (
-          <Link key={x.k} to={x.to}>
-            <Card className="p-4 transition hover:-translate-y-0.5">
-              <p className="text-[11px] uppercase tracking-wider text-muted">{x.k}</p>
-              <p className="mt-1 font-display text-2xl text-primary">{x.v}</p>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-8 grid gap-5 lg:grid-cols-5">
-        <Card className="p-5 lg:col-span-3">
-          <h3 className="font-display text-xl">{t("desk.gmvChart")}</h3>
-          <div className="mt-3 h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={gmvSeries}>
-                <defs>
-                  <linearGradient id="gmvFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b2626" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#8b2626" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#E6D8B4" strokeDasharray="3 3" />
-                <XAxis dataKey="week" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={tooltip} />
-                <Area type="monotone" dataKey="gmv" stroke="#8b2626" fill="url(#gmvFill)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        <Card className="p-5 lg:col-span-2">
-          <h3 className="font-display text-xl">{t("desk.roleMix")}</h3>
-          <div className="mt-3 h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={roleMix} dataKey="value" nameKey="name" innerRadius={48} outerRadius={78} paddingAngle={3}>
-                  {roleMix.map((_, i) => (
-                    <Cell key={i} fill={pieColors[i]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={tooltip} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      <div className="mt-5 grid gap-5 lg:grid-cols-2">
-        <Card className="p-5">
-          <h3 className="font-display text-xl">{t("desk.catMix")}</h3>
-          <div className="mt-4 space-y-2">
-            {categoryMix.map((c) => (
-              <div key={c.name} className="flex items-center gap-3 text-sm">
-                <span className="w-24 text-ink-soft">{c.name}</span>
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-cream-deep">
-                  <div className="h-full rounded-full bg-nature" style={{ width: `${c.value * 2}%` }} />
-                </div>
-                <span className="w-8 text-right font-medium">{c.value}%</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl">{t("desk.openTickets")}</h3>
-            <Link to="/admin/complaints" className="text-xs text-primary">
-              {t("common.viewAll")} →
-            </Link>
-          </div>
-          <ul className="mt-3 space-y-3">
-            {complaints
-              .filter((c) => c.status !== "closed")
-              .slice(0, 4)
-              .map((c) => (
-                <li key={c.id} className="flex items-start justify-between gap-3 text-sm">
-                  <div>
-                    <p className="font-medium">{c.title}</p>
-                    <p className="text-xs text-muted">
-                      {c.id} · {c.from}
-                    </p>
-                  </div>
-                  <Badge tone={c.status === "open" ? "primary" : "secondary"}>{c.status}</Badge>
-                </li>
-              ))}
-          </ul>
-        </Card>
-      </div>
-    </div>
-  );
+  const actions = [
+    { to: "/admin/verify", icon: <FileCheck2 size={20} />, title: t("desk.verify"), body: t("desk.verifyLede") },
+    { to: "/admin/orders", icon: <ClipboardList size={20} />, title: t("desk.orders"), body: t("desk.ordersLede") },
+    { to: "/admin/complaints", icon: <MessageSquareWarning size={20} />, title: t("desk.complaints"), body: t("desk.compLede") },
+  ];
+  return <div className="admin-home">
+    <div className="admin-welcome"><p className="admin-eyebrow">DIRECT FARM</p><h2>{t("desk.overview")}</h2><p>{t("desk.overviewLede")}</p></div>
+    <div className="admin-kpis">{kpis.map((item) => <Link key={item.k} to={item.to} className="admin-kpi"><span className="admin-kpi-icon">{item.icon}</span><span className="admin-kpi-label">{item.k}</span><strong>{item.v}</strong></Link>)}</div>
+    <section className="admin-section"><div className="admin-section-heading"><div><p className="admin-eyebrow">{t("adminUi.todayTasks")}</p><h3>{t("adminUi.mainTaskList")}</h3></div></div><div className="admin-action-grid">{actions.map((action) => <Link key={action.to} to={action.to} className="admin-action"><span>{action.icon}</span><div><h4>{action.title}</h4><p>{action.body}</p></div></Link>)}</div></section>
+    <section className="admin-section"><div className="admin-section-heading"><div><p className="admin-eyebrow">{t("adminUi.attention")}</p><h3>{t("desk.openTickets")}</h3></div><Link to="/admin/complaints" className="admin-text-link">{t("common.viewAll")} <span aria-hidden="true">→</span></Link></div><div className="admin-list">{complaints.filter((c) => c.status !== "closed").slice(0, 4).map((c) => <div key={c.id} className="admin-list-row"><div><strong>{t(`adminData.complaints.${c.id}.title`)}</strong><small>{c.id} · {c.from}</small></div><Badge tone={c.status === "open" ? "primary" : "secondary"}>{t(`desk.tstatus.${c.status}`)}</Badge></div>)}</div></section>
+  </div>;
 }

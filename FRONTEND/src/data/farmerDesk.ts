@@ -24,12 +24,12 @@ export const weeklySales = [
 ];
 
 export const productMix = [
-  { name: "Gir Kesar", key: "mango", value: 41200, fill: "#8B2626" },
-  { name: "A2 Ghee", key: "ghee", value: 19600, fill: "#EF6905" },
-  { name: "Onions", key: "onion", value: 14800, fill: "#D9C56A" },
+  { name: "Gir Kesar", key: "mango", value: 41200, fill: "#15803D" },
+  { name: "A2 Ghee", key: "ghee", value: 19600, fill: "#A16207" },
+  { name: "Onions", key: "onion", value: 14800, fill: "#EAB308" },
   { name: "Bhindi", key: "okra", value: 9200, fill: "#486C2F" },
   { name: "Palak", key: "spinach", value: 6400, fill: "#6A8F48" },
-  { name: "Other", key: "other", value: 7250, fill: "#B33A32" },
+  { name: "Other", key: "other", value: 7250, fill: "#22C55E" },
 ];
 
 export const farmerKpis = {

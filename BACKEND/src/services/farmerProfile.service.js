@@ -9,6 +9,14 @@ class FarmerProfileService {
     return farmerProfileRepository.findByUser(userId);
   }
 
+  async getById(profileId) {
+    const profile = await farmerProfileRepository.findById(profileId);
+    if (!profile) {
+      throw Object.assign(new Error('Farmer profile not found'), { statusCode: 404 });
+    }
+    return profile;
+  }
+
   async updateByUser(userId, updateData) {
     const profile = await farmerProfileRepository.findByUser(userId);
     if (!profile) {

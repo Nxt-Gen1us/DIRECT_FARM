@@ -4,7 +4,7 @@ export const users: User[] = [
   {
     id: "u-customer",
     name: "Ananya Mehta",
-    email: "ananya@farmconnect.ai",
+    email: "ananya@directfarm.com",
     phone: "+91 98250 11420",
     role: "customer",
     district: "Ahmedabad",
@@ -29,7 +29,7 @@ export const users: User[] = [
   {
     id: "u-admin",
     name: "Priya Desai",
-    email: "priya@farmconnect.ai",
+    email: "priya@directfarm.com",
     phone: "+91 99099 22110",
     role: "admin",
     district: "Gandhinagar",
@@ -59,7 +59,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Third-generation farmer growing seasonal vegetables with drip irrigation and vermicompost. Supplies Ahmedabad mandis and direct households.",
     certifications: ["India Organic", "FSSAI", "Jaivik Bharat"],
     languages: ["gu", "hi", "en"],
-    sustainabilityScore: 86,
   },
   {
     id: "f-kavita",
@@ -79,7 +78,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Runs a women-led polyhouse cluster. Harvests twice weekly and traces every crate with a digital crop passport.",
     certifications: ["GlobalG.A.P.", "FSSAI"],
     languages: ["hi", "en"],
-    sustainabilityScore: 81,
   },
   {
     id: "f-harpreet",
@@ -99,7 +97,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Pusa 1121 basmati grown with alternate wetting and drying. Grain moisture and lot identity recorded at the thresher.",
     certifications: ["APEDA", "FSSAI"],
     languages: ["hi", "en"],
-    sustainabilityScore: 78,
   },
   {
     id: "f-lakshmi",
@@ -119,7 +116,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Erode turmeric cured on-farm. Uses neem cake and green manure instead of synthetic soil amendments.",
     certifications: ["India Organic", "Spices Board"],
     languages: ["en", "hi"],
-    sustainabilityScore: 90,
   },
   {
     id: "f-mohan",
@@ -139,7 +135,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Sharbati wheat grown on black cotton soil. Cooperative storage keeps lots separated by field and harvest week.",
     certifications: ["FSSAI"],
     languages: ["hi", "en"],
-    sustainabilityScore: 74,
   },
   {
     id: "f-suresh",
@@ -159,7 +154,6 @@ export const farmers: FarmerProfile[] = [
     bio: "Sun-dried Sannam chili with lab-tested capsaicin and residue reports attached to every passport.",
     certifications: ["Spices Board", "FSSAI"],
     languages: ["en", "hi"],
-    sustainabilityScore: 76,
   },
 ];
 

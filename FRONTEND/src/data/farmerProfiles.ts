@@ -284,7 +284,7 @@ export function profileOrFallback(id: string): FarmProfileExtra {
   return (
     profileByFarmerId(id) ?? {
       farmerId: id,
-      headline: "A verified farm on the FarmConnect ledger.",
+      headline: "A verified farm on the DIRECT FARM ledger.",
       story: [
         "This farm publishes soil, seed and residue with every lot. Walk the gallery, watch the field, and follow the harvest notes.",
       ],

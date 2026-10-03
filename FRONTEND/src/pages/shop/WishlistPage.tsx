@@ -12,10 +12,13 @@ export function WishlistPage() {
   const lots = wishlist.map((id) => productById(id)).filter(Boolean);
 
   return (
-    <div className="container-app py-10 pb-28">
-      <p className="text-xs uppercase tracking-[0.2em] text-secondary">{t("shop.kicker")}</p>
-      <h1 className="mt-1 font-display text-4xl">{t("shop.wishTitle")}</h1>
-      <p className="mt-2 text-sm text-ink-soft">{t("shop.wishLede")}</p>
+    <div className="container-app py-8 pb-28 sm:py-10">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">{t("shop.kicker")}</p>
+      <h1 className="mt-1 font-display text-3xl text-ink sm:text-4xl">{t("shop.wishTitle")}</h1>
+      <p className="mt-2 max-w-2xl text-sm text-ink-soft">{t("shop.wishLede")}</p>
+      <div className="mt-4 rounded-[1.2rem] border border-secondary/25 bg-secondary-soft px-4 py-3 text-xs text-secondary-dark">
+        DIRECT FARM · {lots.length} {t("shop.wishTitle")}
+      </div>
       {lots.length === 0 ? (
         <EmptyState
           title={t("shop.wishEmpty")}

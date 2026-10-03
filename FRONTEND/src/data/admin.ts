@@ -24,20 +24,11 @@ export type Complaint = {
   status: "open" | "looking" | "closed";
 };
 
-export type AiToolUse = {
-  id: string;
-  tool: string;
-  farm: string;
-  calls: number;
-  last: string;
-  confidence: number;
-};
-
 export type DeskReport = {
   id: string;
   title: string;
   period: string;
-  kind: "gmv" | "farm" | "earth" | "ai";
+  kind: "gmv" | "farm";
   ready: boolean;
 };
 
@@ -45,7 +36,7 @@ export const deskUsers: DeskUser[] = [
   {
     id: "u-admin",
     name: "Priya Desai",
-    email: "priya@farmconnect.ai",
+    email: "priya@directfarm.com",
     phone: "+91 99099 22110",
     role: "admin",
     place: "Gandhinagar",
@@ -56,7 +47,7 @@ export const deskUsers: DeskUser[] = [
   {
     id: "u-customer",
     name: "Ananya Mehta",
-    email: "ananya@farmconnect.ai",
+    email: "ananya@directfarm.com",
     phone: "+91 98250 11420",
     role: "customer",
     place: "Ahmedabad",
@@ -190,20 +181,9 @@ export const complaints: Complaint[] = [
   },
 ];
 
-export const aiUsage: AiToolUse[] = [
-  { id: "ai-detect", tool: "Scout detect", farm: "Nashik Valley", calls: 186, last: "2026-04-13T07:40:00+05:30", confidence: 86 },
-  { id: "ai-grade", tool: "Grade fruit", farm: "Ode Organic Acres", calls: 142, last: "2026-04-13T06:10:00+05:30", confidence: 91 },
-  { id: "ai-price", tool: "Mandi price", farm: "Malwa Cooperative", calls: 98, last: "2026-04-12T18:22:00+05:30", confidence: 83 },
-  { id: "ai-disease", tool: "Leaf disease", farm: "Nashik Valley", calls: 74, last: "2026-04-13T08:05:00+05:30", confidence: 78 },
-  { id: "ai-harvest", tool: "Harvest window", farm: "Ode Organic Acres", calls: 61, last: "2026-04-11T19:12:00+05:30", confidence: 88 },
-  { id: "ai-describe", tool: "Lot copy", farm: "Erode Spice Garden", calls: 44, last: "2026-04-10T16:40:00+05:30", confidence: 80 },
-];
-
 export const deskReports: DeskReport[] = [
   { id: "rp-gmv", title: "April GMV & last-mile", period: "1–13 Apr 2026", kind: "gmv", ready: true },
   { id: "rp-farm", title: "Farm verification queue", period: "Week 15", kind: "farm", ready: true },
-  { id: "rp-earth", title: "Carbon & rescue ledger", period: "Nov–Apr", kind: "earth", ready: true },
-  { id: "rp-ai", title: "Scout tool use", period: "Last 30 days", kind: "ai", ready: false },
 ];
 
 export const gmvSeries = [
@@ -237,16 +217,6 @@ export const payMix = [
   { name: "COD", value: 12 },
 ];
 
-export const aiCallsWeek = [
-  { day: "Mon", calls: 42 },
-  { day: "Tue", calls: 51 },
-  { day: "Wed", calls: 38 },
-  { day: "Thu", calls: 67 },
-  { day: "Fri", calls: 58 },
-  { day: "Sat", calls: 29 },
-  { day: "Sun", calls: 18 },
-];
-
 export const deskKpis = {
   gmv: 1842000,
   orders: 1284,
@@ -256,6 +226,4 @@ export const deskKpis = {
   disputes: 7,
   lots: 248,
   pendingFarms: 3,
-  aiCalls: 605,
-  carbonT: 36.4,
 };

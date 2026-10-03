@@ -11,8 +11,18 @@ import errorHandler from './middlewares/errorHandler.js';
 const app = express();
 
 app.use(helmet());
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+	origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+	credentials: true
+}));
+// Capture raw body for webhook signature verification when needed
+app.use(express.json({
+	verify: (req, _res, buf) => {
+		// Capture raw body for all JSON requests so webhook signature verification
+		// can rely on the exact bytes sent by the gateway.
+		req.rawBody = buf;
+	}
+}));
 app.use(express.urlencoded({ extended: true }));
 app.use(mongoSanitize());
 app.use(morgan('combined'));

@@ -23,6 +23,9 @@ export function RainAlertsPage() {
 
   return (
     <IntelShell title={t("intel.rainTitle")} lede={t("intel.rainLede")}>
+      <div className="mb-6 rounded-[1.2rem] border border-secondary/25 bg-secondary-soft px-4 py-3 text-xs text-secondary-dark">
+        DIRECT FARM · weather intelligence
+      </div>
       <div className="mb-6 flex flex-wrap gap-1.5">
         {filters.map((item) => (
           <button

@@ -1,130 +1,140 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, BadgeCheck, QrCode } from "lucide-react";
-import { images } from "../../../assets";
-import { Button } from "../../../components/ui";
+import { ArrowDown, ArrowRight, BadgeCheck, ShieldCheck, ShoppingCart, Sprout, Users } from "lucide-react";
 
-export function Hero() {
+const HERO_IMG = "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&q=80&w=1920";
+
+export function LandingHero() {
   const { t } = useTranslation();
   const reduce = useReducedMotion();
 
+  const fade = (delay = 0) =>
+    reduce
+      ? {}
+      : {
+          initial: { opacity: 0, y: 20 } as const,
+          animate: { opacity: 1, y: 0 } as const,
+          transition: { duration: 0.7, delay, ease: "easeOut" as const },
+        };
+
+  const trustItems = [
+    { label: t("landing.hero.trust1"), icon: ShieldCheck },
+    { label: t("landing.hero.trust2"), icon: BadgeCheck },
+    { label: t("landing.hero.trust3"), icon: Sprout },
+    { label: t("landing.hero.trust4"), icon: ShoppingCart },
+  ];
+
+  const flowItems = [
+    { icon: Users, label: t("landing.value.farmerLabel"), desc: t("landing.value.farmerDesc"), color: "bg-green-500/20 border-green-400/40" },
+    { icon: Sprout, label: "DIRECT FARM", desc: t("landing.value.platformDesc"), color: "bg-yellow-400/20 border-yellow-400/40" },
+    { icon: ShoppingCart, label: t("landing.value.customerLabel"), desc: t("landing.value.customerDesc"), color: "bg-blue-400/20 border-blue-400/40" },
+  ];
+
   return (
-    <section className="relative min-h-[92vh] overflow-hidden">
-      <motion.img
-        src={images.hero.harvest}
-        alt=""
-        className="absolute inset-0 h-full w-full object-cover"
-        initial={reduce ? false : { scale: 1.1 }}
+    <section id="home" className="relative overflow-hidden bg-gradient-to-br from-green-950 via-green-900 to-green-800 min-h-[88vh] flex items-center">
+      <motion.div
+        className="absolute inset-0"
+        initial={reduce ? false : { scale: 1.06 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 10, ease: [0.22, 1, 0.36, 1] }}
-      />
-      <video
-        className="absolute inset-0 hidden h-full w-full object-cover opacity-40 mix-blend-soft-light md:block"
-        autoPlay
-        muted
-        loop
-        playsInline
-        poster={images.hero.harvest}
+        transition={{ duration: 12, ease: "linear" }}
       >
-        <source src="/videos/hero-field.mp4" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-primary-deep/75 to-primary/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-ink/25" />
+        <img
+          src={HERO_IMG}
+          alt={t("landing.hero.imgAlt")}
+          className="w-full h-full object-cover object-center opacity-30"
+          loading="eager"
+          fetchPriority="high"
+        />
+      </motion.div>
 
-      <div className="container-app relative grid min-h-[92vh] items-end gap-10 pb-16 pt-28 lg:grid-cols-12 lg:items-center lg:pb-24">
-        <motion.div
-          className="lg:col-span-7"
-          initial={reduce ? false : { opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.24em] text-accent">
-            {t("landing.hero.kicker")}
-          </p>
-          <h1 className="font-display text-4xl leading-[1.06] text-canvas sm:text-5xl lg:text-[3.75rem]">
-            {t("landing.hero.title")}
-          </h1>
-          <p className="mt-5 max-w-xl text-sm leading-relaxed text-accent/90 md:text-[1.05rem]">
-            {t("landing.hero.subtitle")}
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/market">
-              <Button variant="secondary" size="lg">
-                {t("landing.hero.cta")} <ArrowRight size={16} />
-              </Button>
-            </Link>
-            <Link to="/farmer">
-              <Button variant="cream" size="lg">
-                {t("landing.hero.cta2")}
-              </Button>
-            </Link>
-          </div>
-          <div className="mt-10 grid max-w-lg grid-cols-3 gap-3">
-            {[
-              { n: "642", l: t("landing.hero.farms") },
-              { n: "2,118", l: t("landing.hero.passports") },
-              { n: t("landing.hero.hoursVal"), l: t("landing.hero.hours") },
-            ].map((s) => (
-              <div
-                key={s.l}
-                className="rounded-2xl border border-white/15 bg-canvas/10 px-3 py-4 text-center backdrop-blur-sm"
+      <div className="absolute inset-0 bg-gradient-to-r from-green-950/85 via-green-900/60 to-green-800/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-green-950/70 via-transparent to-transparent" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28 w-full">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div>
+            <motion.div {...fade(0)}>
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 border border-yellow-400/30 text-yellow-300 text-sm font-medium mb-6">
+                <Sprout size={16} />
+                {t("landing.hero.badge")}
+              </span>
+            </motion.div>
+
+            <motion.h1
+              {...fade(0.1)}
+              className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-white leading-tight mb-6"
+            >
+              <span className="block">{t("landing.hero.title1")}</span>
+              <span className="block text-yellow-300">{t("landing.hero.title2")}</span>
+            </motion.h1>
+
+            <motion.p
+              {...fade(0.2)}
+              className="text-green-100/90 text-base sm:text-lg leading-relaxed max-w-lg mb-8"
+            >
+              {t("landing.hero.subtitle")}
+            </motion.p>
+
+            <motion.div {...fade(0.3)} className="flex flex-col sm:flex-row gap-3 mb-10">
+              <Link
+                to="/register?role=farmer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-yellow-400 hover:bg-yellow-300 text-green-950 font-bold text-base transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300"
+                aria-label={t("landing.cta.farmerAriaLabel")}
               >
-                <p className="font-display text-2xl text-accent md:text-3xl">{s.n}</p>
-                <p className="mt-1 text-[11px] leading-snug text-accent/80">{s.l}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
+                {t("landing.hero.farmerCta")}
+                <ArrowRight size={18} />
+              </Link>
+              <Link
+                to="/market"
+                className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold text-base transition-all backdrop-blur-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                aria-label={t("landing.cta.customerAriaLabel")}
+              >
+                {t("landing.hero.customerCta")}
+              </Link>
+            </motion.div>
 
-        <motion.aside
-          className="hidden lg:col-span-5 lg:block"
-          initial={reduce ? false : { opacity: 0, x: 28 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.9, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Link to="/passport" className="block">
-            <article className="overflow-hidden rounded-[1.5rem] border border-white/15 bg-canvas text-ink shadow-[0_30px_60px_-28px_rgb(0_0_0_/_0.55)] transition hover:-translate-y-1">
-              <div className="relative h-40">
-                <img src={images.crops.tomatoes} alt="" className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 to-transparent" />
-                <p className="absolute left-4 top-3 rounded-full bg-accent/95 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink">
-                  {t("nav.passport")}
-                </p>
-                <div className="absolute bottom-3 left-4 text-canvas">
-                  <p className="text-[10px] uppercase tracking-[0.18em] text-accent">NSK-TOM-2026-W15</p>
-                  <p className="font-display text-2xl">Namdhari NS-4266</p>
+            <motion.div {...fade(0.4)} className="flex flex-wrap gap-x-5 gap-y-2">
+              {trustItems.map(({ label, icon: Icon }) => (
+                <span key={label} className="inline-flex items-center gap-2 text-sm text-green-200/80 font-medium">
+                  <Icon size={14} className="text-yellow-300" />
+                  {label}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="hidden lg:block"
+            initial={reduce ? false : { opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/20 p-8 shadow-2xl">
+              <div className="space-y-1">
+                {flowItems.map((item, i) => (
+                  <div key={item.label} className={`rounded-2xl border p-4 ${item.color}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+                        <item.icon size={18} className="text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-white text-sm">{item.label}</p>
+                        <p className="text-white/60 text-xs mt-0.5">{item.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div className="flex items-center justify-center py-2 text-white/60">
+                  <ArrowDown size={18} />
                 </div>
               </div>
-              <div className="grid grid-cols-[1fr_88px] gap-3 p-4">
-                <dl className="grid grid-cols-2 gap-2 text-xs">
-                  <div className="rounded-xl bg-cream px-3 py-2">
-                    <dt className="text-[10px] uppercase tracking-wider text-muted">{t("landing.passport.soil")}</dt>
-                    <dd className="font-medium">Red laterite</dd>
-                  </div>
-                  <div className="rounded-xl bg-cream px-3 py-2">
-                    <dt className="text-[10px] uppercase tracking-wider text-muted">{t("landing.passport.residue")}</dt>
-                    <dd className="font-medium">Below MRL</dd>
-                  </div>
-                  <div className="rounded-xl bg-cream px-3 py-2">
-                    <dt className="text-[10px] uppercase tracking-wider text-muted">{t("landing.passport.carbon")}</dt>
-                    <dd className="font-medium">0.42 kg</dd>
-                  </div>
-                  <div className="rounded-xl bg-cream px-3 py-2">
-                    <dt className="text-[10px] uppercase tracking-wider text-muted">{t("landing.passport.water")}</dt>
-                    <dd className="font-medium">38 L</dd>
-                  </div>
-                </dl>
-                <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-line bg-cream text-center">
-                  <QrCode className="text-primary" size={40} />
-                  <p className="mt-1 flex items-center gap-0.5 text-[9px] text-nature">
-                    <BadgeCheck size={10} /> {t("landing.passport.verify")}
-                  </p>
-                </div>
-              </div>
-            </article>
-          </Link>
-        </motion.aside>
+              <p className="mt-5 text-center text-xs text-white/50 leading-relaxed">
+                {t("landing.value.delivery")}
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

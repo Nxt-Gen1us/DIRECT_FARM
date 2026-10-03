@@ -1,6 +1,6 @@
 const enAccount = {
   account: {
-    title: "Your FarmConnect",
+    title: "Your DIRECT FARM",
     subtitle: "Role, language and the farms you follow.",
     greeting: "Namaste",
     saved: "Saved farms",

@@ -1,7 +1,7 @@
 const enRegister = {
   register: {
     kicker: "Join the ledger",
-    title: "Open a FarmConnect account.",
+    title: "Open a DIRECT FARM account.",
     subtitle: "Kitchen or farm — pick a door. We will walk you through the rest.",
     pathCustomer: "I buy harvests",
     pathCustomerBody: "Homes, hotels and exporters. Follow crates and talk to the farm.",

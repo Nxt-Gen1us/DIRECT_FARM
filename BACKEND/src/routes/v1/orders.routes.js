@@ -17,6 +17,6 @@ router.post('/', authorize('customer'), validateRequest(createOrderSchema), crea
 router.get('/customer', authorize('customer'), listCustomerOrders);
 router.get('/farmer', authorize('farmer'), listFarmerOrders);
 router.get('/:orderId', getOrder);
-router.patch('/:orderId', authorize('farmer', 'admin'), validateRequest(updateOrderSchema), updateOrder);
+router.patch('/:orderId', authorize('customer', 'farmer', 'admin'), validateRequest(updateOrderSchema), updateOrder);
 
 export default router;

@@ -17,6 +17,7 @@ import {
 import type { ProductCategory } from "../../lib/types";
 import { categoryIds } from "../../lib/market";
 import { cn } from "../../lib/cn";
+import { formatUnit } from "../../lib/format";
 
 export function ProductForm({
   initial,
@@ -115,7 +116,7 @@ export function ProductForm({
             <Select value={draft.unit} onChange={(e) => patch({ unit: e.target.value })}>
               {UNITS.map((u) => (
                 <option key={u} value={u}>
-                  {u}
+                  {formatUnit(u)}
                 </option>
               ))}
             </Select>

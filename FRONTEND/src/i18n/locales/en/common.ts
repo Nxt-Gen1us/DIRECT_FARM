@@ -1,6 +1,6 @@
 const enCommon = {
-  brand: "FarmConnect AI",
-  tagline: "From the field to your kitchen, with a passport on every crate.",
+  brand: "DIRECT FARM",
+  tagline: "Fresh food, fairly sourced, delivered to your door.",
   lang: { en: "English", hi: "हिन्दी", gu: "ગુજરાતી" },
   langShort: { en: "EN", hi: "हि", gu: "ગુ" },
   roles: {
@@ -19,6 +19,7 @@ const enCommon = {
     rating: "rating",
     coming: "Reserved",
     menu: "Menu",
+    search: "Search",
     back: "Back",
     open: "Open",
     play: "Play",
@@ -42,10 +43,11 @@ const enCommon = {
     skip: "Skip to harvest",
     emptyTitle: "Nothing on this desk yet",
     loading: "Reading the field…",
+    loadingProduct: "Loading product...",
   },
-  brandLine: "Field · Passport · Kitchen",
-  docTitle: "FarmConnect AI",
-  docTitleHi: "फार्मकनेक्ट एआई",
+  brandLine: "Farm · Market · Kitchen",
+  docTitle: "DIRECT FARM",
+  docTitleHi: "डायरेक्ट फार्म",
 };
 
 export default enCommon;

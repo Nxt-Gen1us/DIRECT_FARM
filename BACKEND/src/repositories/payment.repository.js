@@ -9,6 +9,10 @@ class PaymentRepository {
     return Payment.findOne({ order: orderId });
   }
 
+  async findByRazorpayOrderId(razorpayOrderId) {
+    return Payment.findOne({ razorpayOrderId });
+  }
+
   async findByUser(userId, options = {}) {
     return Payment.find({ user: userId })
       .skip(options.skip || 0)
@@ -18,6 +22,10 @@ class PaymentRepository {
 
   async updateById(id, updateData) {
     return Payment.findByIdAndUpdate(id, updateData, { new: true });
+  }
+
+  async findByTransactionId(transactionId) {
+    return Payment.findOne({ transactionId });
   }
 }
 
