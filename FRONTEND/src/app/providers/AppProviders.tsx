@@ -23,8 +23,10 @@ type AppContextValue = {
   signedIn: boolean;
   login: (user: User, remember: boolean) => void;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void;
   cart: CartItem[];
   addToCart: (productId: string, qty?: number) => void;
+  buyNow: (productId: string, qty?: number) => void;
   addMany: (items: CartItem[]) => void;
   setQty: (productId: string, qty: number) => void;
   removeFromCart: (productId: string) => void;
@@ -136,6 +138,24 @@ export function AppProviders({ children }: { children: ReactNode }) {
     window.sessionStorage.removeItem(USER_KEY);
   }, []);
 
+  const updateUser = useCallback((updates: Partial<User>) => {
+    setUser((current) => {
+      if (!current) return null;
+      const updated = { ...current, ...updates };
+      // Determine which storage was used and update it
+      const inLocalStorage = window.localStorage.getItem(USER_KEY) !== null;
+      const inSessionStorage = window.sessionStorage.getItem(USER_KEY) !== null;
+      
+      if (inLocalStorage) {
+        window.localStorage.setItem(USER_KEY, JSON.stringify(updated));
+      } else if (inSessionStorage) {
+        window.sessionStorage.setItem(USER_KEY, JSON.stringify(updated));
+      }
+      
+      return updated;
+    });
+  }, []);
+
   const persistCart = (next: CartItem[]) => {
     setCart(next);
     window.localStorage.setItem("fc-cart", JSON.stringify(next));
@@ -150,6 +170,12 @@ export function AppProviders({ children }: { children: ReactNode }) {
       window.localStorage.setItem("fc-cart", JSON.stringify(next));
       return next;
     });
+  }, []);
+
+  const buyNow = useCallback((productId: string, qty = 1) => {
+    const next = [{ productId, qty }];
+    setCart(next);
+    window.localStorage.setItem("fc-cart", JSON.stringify(next));
   }, []);
 
   const addMany = useCallback((items: CartItem[]) => {
@@ -218,8 +244,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
       signedIn: Boolean(user),
       login,
       logout,
+      updateUser,
       cart,
       addToCart,
+      buyNow,
       addMany,
       setQty,
       removeFromCart,
@@ -238,8 +266,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
       user,
       login,
       logout,
+      updateUser,
       cart,
       addToCart,
+      buyNow,
       addMany,
       setQty,
       removeFromCart,
