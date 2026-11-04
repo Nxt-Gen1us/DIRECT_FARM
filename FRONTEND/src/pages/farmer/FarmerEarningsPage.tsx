@@ -3,6 +3,7 @@ import { IndianRupee, TrendingUp, Calendar } from "lucide-react";
 import { farmerKpis } from "../../data/farmerDesk";
 import { compactInr, inr } from "../../lib/format";
 import { Card } from "../../components/ui/Card";
+import { PageTitle, SectionTitle } from "../../components/ui/Typography";
 
 const earningsHistory = [
   { id: "ORD-9281", date: "2026-04-12T14:30:00Z", amount: 4500, status: "completed" },
@@ -17,7 +18,7 @@ export function FarmerEarningsPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <h1 className="text-2xl sm:text-3xl font-display text-ink">{t("farmerEarnings.title")}</h1>
+      <PageTitle>{t("farmerEarnings.title")}</PageTitle>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
@@ -50,7 +51,7 @@ export function FarmerEarningsPage() {
 
       {/* Basic History Table */}
       <Card className="p-6">
-        <h2 className="text-xl font-display mb-6">Recent Transactions</h2>
+        <SectionTitle className="mb-6">Recent Transactions</SectionTitle>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[600px]">
             <thead>

@@ -14,12 +14,13 @@ import { farmerById, farmers } from "../../data/farmers";
 import { profileOrFallback } from "../../data/farmerProfiles";
 import { products } from "../../data/products";
 import { fetchProducts } from "../../lib/api/products";
-import { apiConfigured } from "../../lib/api";
-import type { Product } from "../../lib/types";
+import { fetchFarmer, apiConfigured } from "../../lib/api/farmers";
+import type { Product, FarmerProfile } from "../../lib/types";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { ProductCard } from "../../components/marketplace/ProductCard";
 import { StarRow } from "../../components/product/StarRow";
+import { PageTitle, SectionTitle } from "../../components/ui/Typography";
 import { cn } from "../../lib/cn";
 import type { TimelineKind } from "../../data/farmerProfiles";
 
@@ -61,7 +62,7 @@ export function FarmerDirectoryPage() {
                 <p className="flex items-center gap-1 text-xs text-nature">
                   <BadgeCheck size={12} /> {t("profile.verified")}
                 </p>
-                <h2 className="font-display text-xl">{f.farmName}</h2>
+                <SectionTitle className="text-xl">{f.farmName}</SectionTitle>
                 <p className="text-sm text-ink-soft">{f.name}</p>
                 <p className="mt-1 text-xs text-muted">
                   {f.village}, {f.district} · {f.acres} {t("profile.acres")}
@@ -78,12 +79,39 @@ export function FarmerDirectoryPage() {
 export function FarmerProfilePage() {
   const { id } = useParams();
   const { t } = useTranslation();
-  const farmer = farmerById(id ?? "");
+  const [farmer, setFarmer] = useState<FarmerProfile | null>(null);
   const [activeVideo, setActiveVideo] = useState(0);
   const [lightbox, setLightbox] = useState<string | null>(null);
-  const [lots, setLots] = useState<Product[]>(
-    () => products.filter((p) => p.farmerId === (id ?? "")).slice(0, 4),
-  );
+  const [lots, setLots] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch farmer profile from API or local data
+  useEffect(() => {
+    if (!id) {
+      setFarmer(null);
+      setLoading(false);
+      return;
+    }
+
+    const loadFarmer = async () => {
+      setLoading(true);
+      try {
+        if (apiConfigured()) {
+          const apiFarmer = await fetchFarmer(id);
+          setFarmer(apiFarmer);
+        } else {
+          setFarmer(farmerById(id) ?? null);
+        }
+      } catch (error) {
+        console.error("Failed to load farmer:", error);
+        setFarmer(farmerById(id) ?? null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFarmer();
+  }, [id]);
 
   // Fetch real products from backend when API is configured
   useEffect(() => {
@@ -96,6 +124,14 @@ export function FarmerProfilePage() {
       .then((fetched) => setLots(fetched.slice(0, 4)))
       .catch(console.error);
   }, [farmer?.id]);
+
+  if (loading) {
+    return (
+      <div className="container-app py-20 text-center text-ink-soft">
+        {t("profile.loading")}
+      </div>
+    );
+  }
 
   if (!farmer) {
     return (

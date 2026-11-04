@@ -6,6 +6,7 @@ import { formatUnit, inr } from "../../lib/format";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
+import { PageTitle } from "../../components/ui/Typography";
 import type { OrderStatus } from "../../lib/types";
 import { MapPin, CheckCircle2 } from "lucide-react";
 
@@ -25,7 +26,7 @@ export function FarmerOrdersPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <h1 className="text-2xl sm:text-3xl font-display text-ink">{t("farmerNav.orders")}</h1>
+      <PageTitle>{t("farmerNav.orders")}</PageTitle>
 
       <Card className="p-4 sm:p-6 min-h-[500px]">
         {/* Tabs */}

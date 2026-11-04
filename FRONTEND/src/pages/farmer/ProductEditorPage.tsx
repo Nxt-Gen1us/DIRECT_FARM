@@ -6,6 +6,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { useInventory } from "../../app/providers/InventoryProvider";
 import { draftFromProduct, emptyDraft, type ProductDraft } from "../../lib/inventory";
+import { SectionTitle } from "../../components/ui/Typography";
 import { clsx } from "clsx";
 import { formatUnit } from "../../lib/format";
 
@@ -92,7 +93,7 @@ export function ProductEditorPage() {
         {/* Step 1: Photo */}
         {step === 1 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center">
-            <h2 className="text-2xl sm:text-3xl font-display mb-8">{t("farmerProductWizard.step1Question")}</h2>
+            <SectionTitle className="mb-8">{t("farmerProductWizard.step1Question")}</SectionTitle>
             
             {draft.image ? (
               <div className="relative group">

@@ -4,6 +4,7 @@ import { farmers } from "../../data/farmers";
 import { FARMER_ID } from "../../data/farmerDesk";
 import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
+import { PageTitle, SectionTitle } from "../../components/ui/Typography";
 
 export function FarmerFarmPage() {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ export function FarmerFarmPage() {
 
   return (
     <div className="space-y-6 sm:space-y-8 max-w-4xl">
-      <h1 className="text-2xl sm:text-3xl font-display text-ink">{t("farmerProfile.title")}</h1>
+      <PageTitle>{t("farmerProfile.title")}</PageTitle>
 
       {/* Profile Header */}
       <Card className="p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
@@ -28,7 +29,7 @@ export function FarmerFarmPage() {
         
         <div className="flex-1 space-y-3">
           <div className="flex flex-col md:flex-row md:items-center gap-3">
-            <h2 className="text-3xl font-display">{farmer.name}</h2>
+            <SectionTitle className="text-3xl">{farmer.name}</SectionTitle>
             {farmer.certifications.length > 0 && (
               <span className="inline-flex items-center gap-1 text-sm font-medium text-nature bg-nature/10 px-3 py-1 rounded-full">
                 <CheckCircle2 size={16} />
@@ -52,7 +53,7 @@ export function FarmerFarmPage() {
       {/* Farm Details */}
       <div className="grid sm:grid-cols-2 gap-6">
         <Card className="p-6 space-y-4">
-          <h3 className="text-xl font-display">{t("farmerProfile.description")}</h3>
+          <SectionTitle>{t("farmerProfile.description")}</SectionTitle>
           <p className="text-ink-soft leading-relaxed">
             {farmer.bio || t("farmerProfile.bioFallback")}
           </p>
@@ -68,7 +69,7 @@ export function FarmerFarmPage() {
         <Card className="p-6 space-y-4">
           <div className="flex items-center gap-2 text-nature mb-2">
             <ShieldCheck size={24} />
-            <h3 className="text-xl font-display text-ink">{t("farmerProfile.certifications")}</h3>
+            <SectionTitle className="text-ink">{t("farmerProfile.certifications")}</SectionTitle>
           </div>
           {farmer.certifications && farmer.certifications.length > 0 ? (
             <ul className="space-y-3">

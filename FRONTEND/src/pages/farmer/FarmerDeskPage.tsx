@@ -23,6 +23,7 @@ import { compactInr, formatUnit, inr } from "../../lib/format";
 import { Badge } from "../../components/ui/Badge";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
+import { PageTitle } from "../../components/ui/Typography";
 import type { OrderStatus } from "../../lib/types";
 
 export function FarmerDeskPage() {
@@ -44,9 +45,9 @@ export function FarmerDeskPage() {
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-secondary">
             DIRECT FARM
           </p>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-display text-ink">
+          <PageTitle>
             {t("farmerHome.greeting", { name: farmer.name })}
-          </h1>
+          </PageTitle>
           <p className="mt-2 text-sm text-ink-soft sm:text-base">
             {t("farmerHome.whatNext")}
           </p>
@@ -76,6 +77,16 @@ export function FarmerDeskPage() {
             </div>
             <p className="font-medium text-ink">{t("farmerHome.quickAddProduct")}</p>
             <p className="mt-1 text-sm text-muted">{t("farmerHome.quickAddProductSub")}</p>
+          </Card>
+        </Link>
+
+        <Link to="/farmer/profile/edit" className="block group">
+          <Card className="h-full p-5 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_16px_30px_-20px_rgba(59,130,92,0.45)]">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary/10 text-secondary">
+              <BadgeCheck size={22} />
+            </div>
+            <p className="font-medium text-ink">{t("farmerHome.updateProfile") || "Update Profile"}</p>
+            <p className="mt-1 text-sm text-muted">{t("farmerHome.updateProfileSub") || "Edit farm details and gallery"}</p>
           </Card>
         </Link>
 

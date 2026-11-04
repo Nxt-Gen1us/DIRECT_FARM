@@ -5,6 +5,7 @@ import { Save, X, AlertCircle, CheckCircle, Trash2, Plus, Image as ImageIcon } f
 import { useApp } from '../../app/providers/AppProviders';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { PageTitle, SectionTitle } from '../../components/ui/Typography';
 import {
   fetchFarmerProfile,
   updateFarmerProfile,
@@ -264,9 +265,9 @@ export function FarmerProfileEditPage() {
   return (
     <div className="container-app max-w-4xl py-8">
       <div className="mb-6">
-        <h1 className="font-display text-3xl text-ink">
+        <PageTitle>
           {isNewProfile ? t('profile.createFarmer') : t('profile.editFarmer')} || 'Edit Farm Profile'
-        </h1>
+        </PageTitle>
         <p className="mt-1 text-sm text-ink-soft">
           {isNewProfile
             ? t('profile.createFarmerSub') || 'Create your farm profile'
@@ -289,7 +290,7 @@ export function FarmerProfileEditPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Profile Picture */}
         <Card className="p-6">
-          <h2 className="font-display text-lg text-ink">{t('profile.profileImage') || 'Profile Picture'}</h2>
+          <SectionTitle>{t('profile.profileImage') || 'Profile Picture'}</SectionTitle>
 
           <div className="mt-4">
             {imagePreview && (
@@ -327,7 +328,7 @@ export function FarmerProfileEditPage() {
 
         {/* Basic Information */}
         <Card className="p-6">
-          <h2 className="font-display text-lg text-ink">{t('profile.farmInfo') || 'Farm Information'}</h2>
+          <SectionTitle>{t('profile.farmInfo') || 'Farm Information'}</SectionTitle>
 
           <div className="mt-4 space-y-4">
             <div>
@@ -399,7 +400,7 @@ export function FarmerProfileEditPage() {
 
         {/* Location */}
         <Card className="p-6">
-          <h2 className="font-display text-lg text-ink">{t('profile.location') || 'Location'}</h2>
+          <SectionTitle>{t('profile.location') || 'Location'}</SectionTitle>
 
           <div className="mt-4 space-y-4">
             <div>
@@ -486,7 +487,7 @@ export function FarmerProfileEditPage() {
 
         {/* Gallery */}
         <Card className="p-6">
-          <h2 className="font-display text-lg text-ink">{t('profile.gallery') || 'Gallery'}</h2>
+          <SectionTitle>{t('profile.gallery') || 'Gallery'}</SectionTitle>
 
           {/* Existing Gallery */}
           {formData.gallery && formData.gallery.length > 0 && (

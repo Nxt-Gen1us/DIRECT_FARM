@@ -6,6 +6,7 @@ import { useInventory } from "../../app/providers/InventoryProvider";
 import { Button } from "../../components/ui";
 import { Card } from "../../components/ui/Card";
 import { Badge } from "../../components/ui/Badge";
+import { PageTitle } from "../../components/ui/Typography";
 import { formatUnit, inr } from "../../lib/format";
 
 export function ProductListPage() {
@@ -26,7 +27,7 @@ export function ProductListPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">DIRECT FARM</p>
-          <h1 className="mt-1 text-2xl sm:text-3xl font-display text-ink">{t("farmerProducts.title")}</h1>
+          <PageTitle>{t("farmerProducts.title")}</PageTitle>
         </div>
 
         <Link to="/farmer/products/new">
