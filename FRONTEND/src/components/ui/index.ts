@@ -6,3 +6,15 @@ export { Checkbox } from "./Checkbox";
 export { Container, Page, Stack, Grid } from "./Container";
 export { EmptyState } from "./EmptyState";
 export { Spinner } from "./Spinner";
+export { 
+  HeroHeading, 
+  PageTitle, 
+  SectionTitle, 
+  CardTitle, 
+  BodyText, 
+  MutedText, 
+  Caption, 
+  HelperText, 
+  ErrorText, 
+  Label 
+} from "./Typography";

@@ -21,32 +21,52 @@ h1,
 h2,
 h3,
 h4,
+h5,
+h6,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
 }
 
+/* Language-specific defaults */
+html[lang="gu"],
+html[data-lang="gu"],
 html[lang="hi"],
-html[lang="gu"] {
+html[data-lang="hi"] {
   line-height: 1.65;
 }
 
+html[lang="gu"] h1,
+html[lang="gu"] h2,
+html[lang="gu"] h3,
+html[lang="gu"] h4,
+html[lang="gu"] .font-display,
+html[data-lang="gu"] h1,
+html[data-lang="gu"] h2,
+html[data-lang="gu"] h3,
+html[data-lang="gu"] h4,
+html[data-lang="gu"] .font-display,
 html[lang="hi"] h1,
 html[lang="hi"] h2,
 html[lang="hi"] h3,
 html[lang="hi"] h4,
 html[lang="hi"] .font-display,
-html[lang="gu"] h1,
-html[lang="gu"] h2,
-html[lang="gu"] h3,
-html[lang="gu"] h4,
-html[lang="gu"] .font-display {
+html[data-lang="hi"] h1,
+html[data-lang="hi"] h2,
+html[data-lang="hi"] h3,
+html[data-lang="hi"] h4,
+html[data-lang="hi"] .font-display {
   letter-spacing: 0;
   line-height: 1.35;
 }
 
+html[lang="gu"] .uppercase,
+html[lang="gu"] [class*="uppercase"],
+html[data-lang="gu"] .uppercase,
+html[data-lang="gu"] [class*="uppercase"],
 html[lang="hi"] .uppercase,
-html[lang="gu"] .uppercase {
+html[lang="hi"] [class*="uppercase"],
+html[data-lang="hi"] .uppercase,
+html[data-lang="hi"] [class*="uppercase"] {
   letter-spacing: 0.04em;
   text-transform: none;
 }

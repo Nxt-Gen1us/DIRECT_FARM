@@ -1,0 +1,405 @@
+/* DIRECT FARM — Global Typography System */
+
+/* ============================================================================
+   GUJARATI TYPOGRAPHY RULES
+   ============================================================================ */
+
+html[lang="gu"],
+html[data-lang="gu"] {
+  --font-display: var(--font-gujarati-display);
+  --font-body: var(--font-gujarati-body);
+}
+
+html[lang="hi"],
+html[data-lang="hi"] {
+  --font-display: var(--font-hindi-display);
+  --font-body: var(--font-hindi-body);
+}
+
+html[lang="en"],
+html[data-lang="en"] {
+  --font-display: var(--font-english-display);
+  --font-body: var(--font-english-body);
+}
+
+/* Apply font-family to all text elements */
+body,
+html {
+  font-family: var(--font-body);
+}
+
+h1, h2, h3, h4, h5, h6,
+.font-display,
+.heading-display,
+.heading-large,
+.heading-medium {
+  font-family: var(--font-display);
+}
+
+/* ============================================================================
+   HERO TYPOGRAPHY
+   ============================================================================ */
+
+.text-hero,
+.text-hero-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+html[lang="gu"] .text-hero,
+html[lang="gu"] .text-hero-heading,
+html[lang="hi"] .text-hero,
+html[lang="hi"] .text-hero-heading {
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+/* ============================================================================
+   PAGE TITLE TYPOGRAPHY
+   ============================================================================ */
+
+.text-page-title,
+.page-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+html[lang="gu"] .text-page-title,
+html[lang="gu"] .page-heading,
+html[lang="hi"] .text-page-title,
+html[lang="hi"] .page-heading {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* ============================================================================
+   SECTION TITLE TYPOGRAPHY
+   ============================================================================ */
+
+.text-section-title,
+.section-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+html[lang="gu"] .text-section-title,
+html[lang="gu"] .section-heading,
+html[lang="hi"] .text-section-title,
+html[lang="hi"] .section-heading {
+  letter-spacing: 0;
+  line-height: 1.35;
+}
+
+/* ============================================================================
+   CARD TITLE TYPOGRAPHY
+   ============================================================================ */
+
+.text-card-title,
+.card-heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+
+html[lang="gu"] .text-card-title,
+html[lang="gu"] .card-heading,
+html[lang="hi"] .text-card-title,
+html[lang="hi"] .card-heading {
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* ============================================================================
+   BODY TEXT TYPOGRAPHY
+   ============================================================================ */
+
+.text-body,
+.body-text {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+}
+
+html[lang="gu"] .text-body,
+html[lang="gu"] .body-text,
+html[lang="hi"] .text-body,
+html[lang="hi"] .body-text {
+  line-height: 1.75;
+}
+
+/* ============================================================================
+   BUTTON TYPOGRAPHY
+   ============================================================================ */
+
+.text-button,
+button,
+.button {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+html[lang="gu"] .text-button,
+html[lang="gu"] button,
+html[lang="gu"] .button,
+html[lang="hi"] .text-button,
+html[lang="hi"] button,
+html[lang="hi"] .button {
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ============================================================================
+   FORM LABEL TYPOGRAPHY
+   ============================================================================ */
+
+.text-label,
+.form-label,
+label {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+html[lang="gu"] .text-label,
+html[lang="gu"] .form-label,
+html[lang="gu"] label,
+html[lang="hi"] .text-label,
+html[lang="hi"] .form-label,
+html[lang="hi"] label {
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   CAPTION & METADATA TYPOGRAPHY
+   ============================================================================ */
+
+.text-caption,
+.text-meta,
+.caption,
+.metadata {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  letter-spacing: 0;
+}
+
+html[lang="gu"] .text-caption,
+html[lang="gu"] .text-meta,
+html[lang="gu"] .caption,
+html[lang="gu"] .metadata,
+html[lang="hi"] .text-caption,
+html[lang="hi"] .text-meta,
+html[lang="hi"] .caption,
+html[lang="hi"] .metadata {
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   HELPER TEXT & ERROR MESSAGES
+   ============================================================================ */
+
+.text-helper,
+.helper-text,
+.text-error,
+.error-text,
+small {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+html[lang="gu"] .text-helper,
+html[lang="gu"] .helper-text,
+html[lang="gu"] .text-error,
+html[lang="gu"] .error-text,
+html[lang="gu"] small,
+html[lang="hi"] .text-helper,
+html[lang="hi"] .helper-text,
+html[lang="hi"] .text-error,
+html[lang="hi"] .error-text,
+html[lang="hi"] small {
+  line-height: 1.6;
+}
+
+/* ============================================================================
+   MUTED & SECONDARY TEXT
+   ============================================================================ */
+
+.text-muted,
+.text-secondary {
+  color: var(--color-ink-soft);
+}
+
+/* ============================================================================
+   RESPONSIVE TYPOGRAPHY ADJUSTMENTS
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .text-hero,
+  .text-hero-heading {
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+  }
+
+  .text-page-title,
+  .page-heading {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .text-section-title,
+  .section-heading {
+    font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .text-card-title,
+  .card-heading {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+  }
+
+  .text-body,
+  .body-text {
+    font-size: 0.9375rem;
+  }
+
+  .text-button,
+  button,
+  .button {
+    font-size: 0.9375rem;
+  }
+}
+
+/* ============================================================================
+   GUJARATI-SPECIFIC ADJUSTMENTS
+   ============================================================================ */
+
+html[lang="gu"] h1,
+html[lang="gu"] h2,
+html[lang="gu"] h3,
+html[lang="gu"] h4,
+html[lang="gu"] h5,
+html[lang="gu"] h6 {
+  letter-spacing: 0;
+}
+
+html[lang="gu"] p,
+html[lang="gu"] li,
+html[lang="gu"] dd,
+html[lang="gu"] dt {
+  letter-spacing: 0;
+}
+
+html[lang="gu"] .uppercase,
+html[lang="gu"] [class*="uppercase"] {
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* ============================================================================
+   HINDI-SPECIFIC ADJUSTMENTS
+   ============================================================================ */
+
+html[lang="hi"] h1,
+html[lang="hi"] h2,
+html[lang="hi"] h3,
+html[lang="hi"] h4,
+html[lang="hi"] h5,
+html[lang="hi"] h6 {
+  letter-spacing: 0;
+}
+
+html[lang="hi"] p,
+html[lang="hi"] li,
+html[lang="hi"] dd,
+html[lang="hi"] dt {
+  letter-spacing: 0;
+}
+
+html[lang="hi"] .uppercase,
+html[lang="hi"] [class*="uppercase"] {
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* ============================================================================
+   ENGLISH-SPECIFIC ADJUSTMENTS
+   ============================================================================ */
+
+html[lang="en"] h1,
+html[lang="en"] h2,
+html[lang="en"] h3 {
+  letter-spacing: -0.02em;
+}
+
+html[lang="en"] .uppercase,
+html[lang="en"] [class*="uppercase"] {
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ============================================================================
+   ENSURE NO TEXT CLIPPING
+   ============================================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+button,
+input,
+select,
+textarea,
+.button,
+.input,
+.select {
+  min-height: 1.5em;
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================ */
+
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+.leading-tight { line-height: 1.25; }
+.leading-snug { line-height: 1.375; }
+.leading-normal { line-height: 1.5; }
+.leading-relaxed { line-height: 1.625; }
+.leading-loose { line-height: 2; }
