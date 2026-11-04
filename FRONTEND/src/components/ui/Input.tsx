@@ -37,7 +37,7 @@ export function Field({
   const { t } = useTranslation();
   return (
     <label className="block">
-      <span className="mb-1.5 flex items-baseline justify-between gap-2 text-xs font-medium uppercase tracking-wider text-muted">
+      <span className="mb-1.5 flex items-baseline justify-between gap-2 text-label text-muted">
         <span>{label}</span>
         {optional && (
           <span className="normal-case tracking-normal text-[10px]">{t("register.optional")}</span>
@@ -45,11 +45,11 @@ export function Field({
       </span>
       {children}
       {error ? (
-        <span className="mt-1 block text-xs text-primary" role="alert">
+        <span className="mt-1 block text-helper text-danger" role="alert">
           {error}
         </span>
       ) : hint ? (
-        <span className="mt-1 block text-xs text-muted">{hint}</span>
+        <span className="mt-1 block text-helper text-muted">{hint}</span>
       ) : null}
     </label>
   );

@@ -36,7 +36,7 @@ export function SectionHead({
             {kicker}
           </p>
         )}
-        <h2 className="font-display text-3xl text-ink md:text-4xl">{title}</h2>
+        <h2 className="text-section-title">{title}</h2>
       </div>
       {action}
     </div>
