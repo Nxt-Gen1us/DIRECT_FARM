@@ -33,6 +33,7 @@ import { CompareToggle } from "../components/marketplace/CompareToggle";
 import { useShop } from "../app/providers/ShopProvider";
 import { ProductGallery } from "../components/product/ProductGallery";
 import { StarRow } from "../components/product/StarRow";
+import { PageTitle, SectionTitle, CardTitle } from "../components/ui/Typography";
 import { cn } from "../lib/cn";
 
 export function ProductPage() {
@@ -179,9 +180,9 @@ export function ProductPage() {
               </Badge>
             </div>
 
-            <h1 className="mt-2.5 sm:mt-3 font-display text-2xl sm:text-3xl leading-tight text-ink md:text-4xl">
+            <PageTitle className="mt-2.5 sm:mt-3">
               {product.name}
-            </h1>
+            </PageTitle>
             <p className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-ink-soft">
               {product.variety} · {t("detail.sku")} {passport?.lotCode ?? product.passportId}
             </p>
@@ -360,10 +361,10 @@ export function ProductPage() {
               <div className="grid gap-5 sm:gap-6 md:grid-cols-[200px_1fr] lg:grid-cols-[220px_1fr]">
                 <img src={farmer.cover} alt="" className="h-44 sm:h-48 w-full rounded-xl sm:rounded-2xl object-cover" />
                 <div>
-                  <p className="flex items-center gap-1.5 sm:gap-2 font-display text-xl sm:text-2xl">
+                  <CardTitle className="flex items-center gap-1.5 sm:gap-2">
                     {farmer.farmName}
                     <BadgeCheck className="text-nature" size={16} />
-                  </p>
+                  </CardTitle>
                   <p className="mt-0.5 sm:mt-1 flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm text-muted">
                     <MapPin size={11} /> {farmer.village}, {farmer.district}, {farmer.state}
                   </p>
@@ -399,9 +400,9 @@ export function ProductPage() {
             {tab === "passport" && passport && (
               <div className="grid gap-5 sm:gap-6 md:grid-cols-[1fr_140px] lg:grid-cols-[1fr_160px]">
                 <div>
-                  <p className="font-display text-xl sm:text-2xl">
+                  <CardTitle>
                     {passport.crop} · {passport.variety}
-                  </p>
+                  </CardTitle>
                   <dl className="mt-3 sm:mt-4 grid grid-cols-2 gap-1.5 sm:gap-2 text-xs sm:text-sm sm:grid-cols-3">
                     {[
                       [t("detail.sku"), passport.lotCode],
@@ -472,7 +473,9 @@ export function ProductPage() {
 
         {more.length > 0 && (
           <div className="mt-12 sm:mt-14">
-            <h2 className="mb-5 sm:mb-6 font-display text-2xl sm:text-3xl">{t("detail.moreLots")}</h2>
+            <SectionTitle className="mb-5 sm:mb-6">
+              {t("detail.moreLots")}
+            </SectionTitle>
             <div className="grid gap-4 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {more.map((p) => (
                 <ProductCard key={p.id} product={p} />

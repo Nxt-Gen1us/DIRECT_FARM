@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useApp } from "../app/providers/AppProviders";
@@ -10,17 +10,17 @@ import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { SmartHints } from "../components/marketplace/SmartHints";
 import { RecentlyViewed } from "../components/marketplace/RecentlyViewed";
+import { PageTitle } from "../components/ui/Typography";
 
 export function CartPage() {
   const { t } = useTranslation();
   const { cart, setQty, removeFromCart, cartTotal } = useApp();
-  const navigate = useNavigate();
   const delivery = deliveryFee(cartTotal);
 
   return (
     <div className="container-app py-8 sm:py-10">
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">DIRECT FARM</p>
-      <h1 className="mt-1 font-display text-2xl text-ink sm:text-3xl md:text-4xl">{t("flow.cart")}</h1>
+      <PageTitle>{t("flow.cart")}</PageTitle>
 
       {cart.length === 0 ? (
         <EmptyState
@@ -99,9 +99,6 @@ export function CartPage() {
                 <span className="font-display text-lg text-primary sm:text-xl">{inr(cartTotal + delivery)}</span>
               </div>
             </div>
-            <Button className="mt-4 w-full" onClick={() => navigate("/checkout")}>
-              {t("flow.checkout")}
-            </Button>
             <Link to="/box" className="mt-3 block text-center text-[10px] text-primary sm:text-xs">
               {t("shop.tryBox")}
             </Link>

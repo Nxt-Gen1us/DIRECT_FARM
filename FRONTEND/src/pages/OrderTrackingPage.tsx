@@ -7,6 +7,7 @@ import { formatDate, inr } from "../lib/format";
 import { Badge, Button, Field, Input } from "../components/ui";
 import { Card } from "../components/ui/Card";
 import { OrderTimeline } from "../components/orders/OrderTimeline";
+import { PageTitle } from "../components/ui/Typography";
 import { apiConfigured, tokenStore } from "../lib/api";
 import { 
   fetchDeliveryTracking, 
@@ -163,7 +164,7 @@ export function OrderTrackingPage() {
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">DIRECT FARM</p>
-          <h1 className="mt-1 font-display text-2xl text-ink sm:text-3xl">{order.id}</h1>
+          <PageTitle>{order.id}</PageTitle>
           <p className="mt-1 text-sm text-ink-soft">
             {order.farmerName} · {t("flow.eta")} {order.eta}
           </p>

@@ -8,6 +8,7 @@ import { formatDate, formatUnit, inr } from "../lib/format";
 import { Badge, Button, Field, Textarea } from "../components/ui";
 import { Card } from "../components/ui/Card";
 import { OrderTimeline } from "../components/orders/OrderTimeline";
+import { PageTitle, SectionTitle } from "../components/ui/Typography";
 
 export function OrderDetailPage() {
   const { id } = useParams();
@@ -32,7 +33,7 @@ export function OrderDetailPage() {
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">DIRECT FARM</p>
-          <h1 className="mt-1 font-display text-2xl text-ink sm:text-3xl">{order.id}</h1>
+          <PageTitle>{order.id}</PageTitle>
           <p className="mt-1 text-sm text-ink-soft">
             {order.farmerName} · {formatDate(order.placedAt)} · {t("flow.eta")} {order.eta}
           </p>
@@ -47,7 +48,7 @@ export function OrderDetailPage() {
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_300px]">
         <div className="space-y-6">
           <Card className="p-5">
-            <h2 className="mb-4 font-display text-2xl text-ink">{t("flow.track")}</h2>
+            <SectionTitle className="mb-4">{t("flow.track")}</SectionTitle>
             <OrderTimeline order={order} />
             {order.status === "cancelled" && (
               <p className="mt-4 text-sm text-primary">
@@ -130,9 +131,9 @@ export function OrderDetailPage() {
       {mode !== "none" && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-ink/60 p-4">
           <Card className="w-full max-w-md p-6">
-            <h2 className="font-display text-2xl text-ink">
+            <SectionTitle className="text-2xl">
               {mode === "cancel" ? t("flow.cancelTitle") : t("flow.returnTitle")}
-            </h2>
+            </SectionTitle>
             <p className="mt-2 text-sm text-ink-soft">
               {mode === "cancel" ? t("flow.cancelBody") : t("flow.returnBody")}
             </p>

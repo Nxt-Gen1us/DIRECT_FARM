@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
+import { PageTitle } from "../components/ui/Typography";
 import type { OrderStatus } from "../lib/types";
 
 const tone: Record<OrderStatus, "primary" | "secondary" | "nature" | "accent" | "muted"> = {
@@ -33,7 +34,7 @@ export function OrdersPage() {
   return (
     <div className="container-app py-8 sm:py-10">
       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-secondary sm:text-xs">DIRECT FARM</p>
-      <h1 className="mt-1 font-display text-2xl text-ink sm:text-3xl md:text-4xl">{t("flow.ordersTitle")}</h1>
+      <PageTitle>{t("flow.ordersTitle")}</PageTitle>
       <p className="mt-2 text-sm text-ink-soft">{t("flow.ordersSub")}</p>
 
       {orders.length === 0 ? (
